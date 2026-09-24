@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Open Claude Design — PUPFR!SKY × Claude · Netlify OSS", description: "1-click Deploy to Netlify. BYOK. Admin frk_live_. Mobbin gated. Awwwards floor." },
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
