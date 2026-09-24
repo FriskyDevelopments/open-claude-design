@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { SupportFooterStrip, SupportRailCompact } from "@/components/SupportRail";
 
 // ── BYOK (BYO API keys): client-only, stays in localStorage; sent as x-api-key header
 //        and proxied by netlify/functions/chat.ts (dumb forwarder) to Anthropic/OpenAI/OpenRouter.
@@ -189,7 +190,15 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
           </a>
         </div>
       </div>
-      <div className="mt-auto border-t border-white/10 p-2">
+      <div className="border-t border-white/10 p-2">
+        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2">
+          <div className="font-mono text-[9px] tracking-[0.18em] text-white/30 uppercase">Apoya — Keep it pup</div>
+          <div className="mt-1.5">
+            <SupportRailCompact />
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-white/10 p-2">
         <div className="flex items-center gap-2 rounded-xl border-2 border-white bg-[#191424] px-2 py-2 shadow-[0_6px_0_rgba(0,0,0,.4)]">
           <span className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[10px] font-[900] text-[#121212]">FP</span>
           <div className="min-w-0">
@@ -524,6 +533,9 @@ export default function Page() {
                 </Link>
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 font-mono text-xs tracking-wide text-white/40">Next.js 16 · Tailwind 4 · 1440px proof</span>
               </div>
+            </div>
+            <div className="mt-6">
+              <SupportFooterStrip />
             </div>
           </div>
         </main>

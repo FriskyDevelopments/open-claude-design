@@ -10,7 +10,7 @@
 
 ![Diseño — gallery + Admin + Netlify OSS · 1440px](./public/og-image.svg)
 
-> **[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design)** · **[Admin `/admin`](src/app/admin/page.tsx)** · **[Figma → code](#design-system)** · **[X promo thread](docs/X_PROMO.md)** · **[We speak english](README_EN.md)**
+> **[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design)** · **[Admin `/admin`](src/app/admin/page.tsx)** · **[Support Whop/Donate →](#support)** · **[X promo thread](docs/X_PROMO.md)** · **[We speak english](README_EN.md)**
 
 </div>
 
@@ -62,6 +62,12 @@ Works: `claude-sonnet-4-20250514` · `gpt-5` · any OpenRouter model (same desig
 Scopes in UI: `frisky.mcp` (all tools) + `mobbin:read` + `memory:read` + `github:read` + `model:live`.
 
 Zebuar note: your `zat_…` is expired (`check`). After `zeabur auth login` → `docs/ZEABUR.md` → `mcp.friskydev.com` → `mcp.zeabur.com` canonical.
+
+## Support — Whop & Donations
+
+Icon row (left→right): **[Whop](https://whop.com/pupfrisky)** — PUPFR!SKY storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/pupfrisky)** · **[Buy Me a Coffee](https://buymeacoffee.com/pupfrisky)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it pup: one Whop checkout or coffee = more 1440px jewels.
+
+In-app: Sidebar **SupportRail** + footer **Support strip** (`src/components/SupportRail.tsx` — `LINKS` source-of-truth).
 
 ## Design system
 
