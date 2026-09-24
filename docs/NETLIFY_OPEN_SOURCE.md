@@ -16,7 +16,7 @@
 
 Netlify gallery | Zeabur MCP (live auth/Mobbin)
 --- | ---
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/YOU/open-claude-design) | `docs/ZEABUR.md`
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design) | `docs/ZEABUR.md`
 Builds: `npm run build` → `.next` (static) | Auth: Supabase owner `5cczgpz…@privaterelay.appleid.com` + `frk_live_` API keys
 
 ## Cross-promo for X / Frisky footprint

@@ -4,13 +4,13 @@
 
 ### The only open repo that clones `claude.ai` Diseño (Sep 2026) — breathtaking or it doesn't ship.
 
-[![MIT](https://img.shields.io/badge/license-MIT-121212.svg)](LICENSE) [![Netlify](https://img.shields.io/badge/Deploy%20to%20Netlify-1%E2%80%93click-00C7B7.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/YOU/open-claude-design) [![Netlify OSS](https://img.shields.io/badge/Netlify-Open%20Source%20Plan-00C7B7.svg)](open-source.netlify.com) [![Next 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org) [![Tailwind 4](https://img.shields.io/badge/tailwind-4-38bdf8.svg)](https://tailwindcss.com) [![Awwwards floor](https://img.shields.io/badge/awwwards-floor-FFD100.svg)](#awwwards)
+[![MIT](https://img.shields.io/badge/license-MIT-121212.svg)](LICENSE) [![Netlify](https://img.shields.io/badge/Deploy%20to%20Netlify-1%E2%80%93click-00C7B7.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design) [![Netlify OSS](https://img.shields.io/badge/Netlify-Open%20Source%20Plan-00C7B7.svg)](open-source.netlify.com) [![Next 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org) [![Tailwind 4](https://img.shields.io/badge/tailwind-4-38bdf8.svg)](https://tailwindcss.com) [![Awwwards floor](https://img.shields.io/badge/awwwards-floor-FFD100.svg)](#awwwards)
 
 **Clean rebuild from visual spec (Mobbin as reference) — no screenshots redistributed.** Inspired by `claude.ai`, not affiliated with Anthropic.
 
 ![Diseño — gallery + Admin + Netlify OSS · 1440px](./public/og-image.svg)
 
-> **[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/YOU/open-claude-design)** · **[Admin `/admin`](src/app/admin/page.tsx)** · **[Figma → code](#design-system)** · **[X promo thread](docs/X_PROMO.md)** · **[We speak english](README_EN.md)**
+> **[Deploy to Netlify](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design)** · **[Admin `/admin`](src/app/admin/page.tsx)** · **[Figma → code](#design-system)** · **[X promo thread](docs/X_PROMO.md)** · **[We speak english](README_EN.md)**
 
 </div>
 
@@ -30,7 +30,7 @@
 
 ## Deploy to Netlify (1 click) + promo as Open Source
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/YOU/open-claude-design)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design)
 
 ```bash
 npm i

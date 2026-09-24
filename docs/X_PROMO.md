@@ -18,7 +18,7 @@ PUPFR!SKY skin (#121212 / #FFD100 / #00E5FF / #9D00FF) · die-cut stickers · br
 
 MIT. Help me earn Netlify Open Source perks → star + deploy 👇
 
-Repo: `github.com/YOU/open-claude-design`
+Repo: `github.com/FriskyDevelopments/open-claude-design`
 Live: `open-claude-design.netlify.app` · `/admin` (frk_live_ API keys)
 
 [alt: Cloned Diseños header, 4 cards, project grid Nocturne/Code Pup, 1440px screenshot proof]
