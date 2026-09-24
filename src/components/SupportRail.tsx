@@ -8,7 +8,7 @@
 
 export const LINKS = {
   // Frisky storefront on Whop — list your product URL here so one edit updates sidebar + README + OG
-  whop: "https://whop.com/pupfrisky",
+  whop: "https://whop.com/friskydev",
   // GitHub Sponsors — edit username to your Sponsors handle
   githubSponsors: "https://github.com/sponsors/FriskyDevelopments",
   // Donations: add all active rails (Netlify Open Source perk != money — this is optional support)
@@ -16,7 +16,7 @@ export const LINKS = {
     // Gofundme / Ko-fi / Buy Me a Coffee / Open Collective — fill what you actually use
     kofi: "https://ko-fi.com/pupfrisky",
     // Paypal/Whop checkout/etc — placeholder for the real link after you hook checkout
-    paypal: "https://whop.com/pupfrisky/checkout",
+    paypal: "https://whop.com/friskydev/checkout",
     bmc: "https://buymeacoffee.com/pupfrisky",
   },
   // Source + live deploys (for icon row)
