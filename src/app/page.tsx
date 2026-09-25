@@ -386,7 +386,7 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
       <div className={`sticker-hover card-sheen relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-[#FFD100] ${glow[variant]}`}>
         <span className="absolute left-2.5 top-2 z-10 rounded-full border border-white/15 bg-black/55 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-white/70 backdrop-blur" aria-hidden>{num}</span>
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-black/30" aria-hidden />
-        <div className="relative flex h-full items-center justify-center">
+        <div className="door-static relative flex h-full items-center justify-center">
           {title === "Slides" && (
             <div className="h-[64%] w-[78%] rounded-xl border-2 border-white bg-gradient-to-br from-[#FFD100]/25 to-[#FFD100]/5 p-3 shadow-xl">
               <div className="h-3 w-12 rounded-full bg-[#FFD100]" />
@@ -435,6 +435,47 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
             </div>
           )}
         </div>
+        {title === "Slides" && (
+          <div className="door-preview" aria-hidden>
+            <div className="fan relative h-[62%] w-[70%]">
+              <div className="absolute inset-0 rounded-lg border-2 border-[#FFD100]/60 bg-[#FFD100]/10" />
+              <div className="absolute inset-0 rounded-lg border-2 border-white/70 bg-[#1c1828] p-2">
+                <div className="h-2 w-10 rounded-full bg-[#FFD100]" />
+                <div className="mt-1.5 h-1.5 w-8 rounded-full bg-white/25" />
+                <div className="mt-1 h-1.5 w-6 rounded-full bg-white/15" />
+              </div>
+              <div className="absolute inset-0 rounded-lg border border-white/20 bg-black/40" />
+            </div>
+          </div>
+        )}
+        {title === "Design" && (
+          <div className="door-preview" aria-hidden>
+            <svg viewBox="0 0 120 60" className="h-[62%] w-[76%]">
+              <rect x="2" y="2" width="116" height="56" rx="10" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+              <path className="draw-path" d="M14 44 C 34 44, 40 14, 60 14 S 88 40, 106 30" fill="none" stroke="#9D00FF" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="106" cy="30" r="3.5" fill="#00E5FF" />
+            </svg>
+          </div>
+        )}
+        {title === "Design in codebase" && (
+          <div className="door-preview" aria-hidden>
+            <div className="w-[78%] rounded-lg border border-white/15 bg-black/80 p-2 font-mono text-[10px] leading-4">
+              <div className="term-line text-[#00E5FF]">$ frisky design ./src</div>
+              <div className="term-line text-white/70">◇ tokens → tailwind ✓</div>
+              <div className="term-line text-[#FFD100]">✓ 1440px proof<span className="animate-pulse">_</span></div>
+            </div>
+          </div>
+        )}
+        {title === "Design System" && (
+          <div className="door-preview" aria-hidden>
+            <div className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/60 px-3 py-2.5 backdrop-blur">
+              <span className="tok h-5 w-5 rounded-md border border-white bg-[#FFD100]" />
+              <span className="tok h-5 w-5 rounded-md border border-white bg-[#00E5FF]" />
+              <span className="tok h-5 w-5 rounded-md border border-white bg-[#9D00FF]" />
+              <span className="tok h-5 w-5 rounded-md border border-white bg-white" />
+            </div>
+          </div>
+        )}
       </div>
       <div className="mt-2 flex items-center gap-1.5 text-[13px] font-[700] tracking-[-0.02em] text-white/90 transition-colors group-hover:text-white">
         <span aria-hidden className={accent[variant]}>

@@ -279,6 +279,99 @@ body::after {
   transform: translateX(110%);
 }
 
+/* ── box FX: the doors open ───────────────────────────
+   Each MakeCard carries a .door-preview overlay: a live micro-scene
+   (slide fan / drawing cursor / typing terminal / token snap) that
+   fades + rises in on hover/focus. The static glyph dims back.
+   Pure CSS, staggered children, keyboard-accessible via :focus-within. */
+.door-preview {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.group:hover .door-preview,
+.group:focus-within .door-preview {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.group:hover .door-static,
+.group:focus-within .door-static {
+  opacity: 0.18;
+  transform: scale(0.94);
+  filter: blur(1px);
+}
+.door-static {
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.45s;
+}
+/* slide fan: three sheets spread on open */
+.door-preview .fan > * {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .door-preview .fan > *:nth-child(1),
+.group:focus-within .door-preview .fan > *:nth-child(1) { transform: rotate(-9deg) translate(-8px, 4px); }
+.group:hover .door-preview .fan > *:nth-child(2),
+.group:focus-within .door-preview .fan > *:nth-child(2) { transform: translateY(-4px); }
+.group:hover .door-preview .fan > *:nth-child(3),
+.group:focus-within .door-preview .fan > *:nth-child(3) { transform: rotate(9deg) translate(8px, 4px); }
+/* draw stroke: the path draws itself on open */
+.door-preview .draw-path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+}
+.group:hover .door-preview .draw-path,
+.group:focus-within .door-preview .draw-path { stroke-dashoffset: 0; }
+/* terminal lines: type in sequence on open */
+.door-preview .term-line {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.3s,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .door-preview .term-line:nth-child(1),
+.group:focus-within .door-preview .term-line:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.08s; }
+.group:hover .door-preview .term-line:nth-child(2),
+.group:focus-within .door-preview .term-line:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.24s; }
+.group:hover .door-preview .term-line:nth-child(3),
+.group:focus-within .door-preview .term-line:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.4s; }
+/* token snap: swatches pop in with stagger */
+.door-preview .tok {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 0.3s,
+    transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.group:hover .door-preview .tok:nth-child(1),
+.group:focus-within .door-preview .tok:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.05s; }
+.group:hover .door-preview .tok:nth-child(2),
+.group:focus-within .door-preview .tok:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.14s; }
+.group:hover .door-preview .tok:nth-child(3),
+.group:focus-within .door-preview .tok:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.23s; }
+.group:hover .door-preview .tok:nth-child(4),
+.group:focus-within .door-preview .tok:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.32s; }
+@media (prefers-reduced-motion: reduce) {
+  .door-preview { transition: opacity 0.2s; transform: none; }
+  .group:hover .door-static, .group:focus-within .door-static { transform: none; filter: none; }
+  .door-preview .draw-path { transition: none; stroke-dashoffset: 0; }
+  .door-preview .term-line, .door-preview .tok { transition: none; }
+  .group:hover .door-preview .term-line, .group:focus-within .door-preview .term-line,
+  .group:hover .door-preview .tok, .group:focus-within .door-preview .tok { transition-delay: 0s; }
+}
+
 /* breathing dot — the live indicator pulses like a signal light */
 @keyframes breathe {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.5); }
