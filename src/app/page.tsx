@@ -653,9 +653,8 @@ export default function Page() {
                 </div>
               )}
             </div>
-            <div className="act-rule" aria-hidden><i /></div>
             {/* act 02: the four doors rise one after another */}
-            <div className="reveal mt-8" style={{ ["--reveal-delay" as string]: "480ms" }}>
+            <div className="reveal mt-5" style={{ ["--reveal-delay" as string]: "480ms" }}>
               <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
                 {t.make} <span className="ml-2 text-[#FFD100]/60">{t.act2}</span>
               </div>
@@ -671,7 +670,7 @@ export default function Page() {
             </div>
 
             {/* ticker: the studio signal, always moving — pure FR!sky voice */}
-            <div className="reveal mt-6 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] py-2" style={{ ["--reveal-delay" as string]: "430ms" }} aria-hidden>
+            <div className="reveal mt-4 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] py-1.5" style={{ ["--reveal-delay" as string]: "430ms" }} aria-hidden>
               <div className="ticker-track flex w-max items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] text-white/35 uppercase">
                 {Array.from({ length: 2 }).map((_, dup) => (
                   <span key={dup} className="flex items-center gap-8">
