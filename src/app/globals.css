@@ -26,6 +26,17 @@
   --font-serif: var(--font-bricolage), sans-serif;
 }
 
+::selection {
+  background: #ffd100;
+  color: #121212;
+}
+
+:focus-visible {
+  outline: 2px solid #ffd100;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
@@ -147,7 +158,10 @@ body::after {
     0 22px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* reveal: elements rise out of the dark like title cards */
+/* reveal: elements rise out of the dark like title cards.
+   .reveal = on-load choreography (hero). .reveal-scroll = viewport-driven
+   (everything below the fold) via IntersectionObserver — elements stay
+   hidden until actually seen, then play once and hold. */
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(26px); filter: blur(6px); }
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
@@ -157,8 +171,42 @@ body::after {
   animation: rise-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--reveal-delay, 0ms);
 }
+.reveal-scroll {
+  opacity: 0;
+  transform: translateY(34px);
+  filter: blur(6px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-scroll.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+/* stagger children inside a revealed parent: cards cascade */
+.reveal-scroll.is-in .cascade > *:nth-child(1) { transition-delay: 60ms; }
+.reveal-scroll.is-in .cascade > *:nth-child(2) { transition-delay: 140ms; }
+.reveal-scroll.is-in .cascade > *:nth-child(3) { transition-delay: 220ms; }
+.reveal-scroll.is-in .cascade > *:nth-child(4) { transition-delay: 300ms; }
+.reveal-scroll.is-in .cascade > *:nth-child(5) { transition-delay: 380ms; }
+.reveal-scroll.is-in .cascade > *:nth-child(6) { transition-delay: 460ms; }
+.cascade > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scroll.is-in .cascade > * {
+  opacity: 1;
+  transform: translateY(0);
+}
 @media (prefers-reduced-motion: reduce) {
   .reveal { animation: none; opacity: 1; }
+  .reveal-scroll, .cascade > * { transition: none; opacity: 1; transform: none; filter: none; }
   body::before, body::after, .film-grain { animation: none; }
 }
 
@@ -168,6 +216,47 @@ body::after {
     0 0 1px rgba(247, 245, 242, 0.9),
     0 0 22px rgba(255, 209, 0, 0.16),
     0 0 64px rgba(157, 0, 255, 0.12);
+}
+
+/* section divider: hairline with a neon node — rhythm between acts */
+.act-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2.5rem 0 0;
+}
+.act-rule::before {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14));
+}
+.act-rule::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent);
+}
+.act-rule > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: #ffd100;
+  box-shadow: 0 0 12px rgba(255, 209, 0, 0.8);
+}
+
+/* pressable pills: magnetic hover, honest active */
+.press {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s;
+}
+.press:hover {
+  transform: translateY(-1px);
+}
+.press:active {
+  transform: translateY(1px) scale(0.99);
 }
 
 /* scanline shimmer across cards — light passes over, once per rest */

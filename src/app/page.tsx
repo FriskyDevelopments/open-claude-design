@@ -1,8 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { SupportFooterStrip, SupportRailCompact } from "@/components/SupportRail";
+
+// Viewport reveal: adds .is-in once when the section scrolls into view.
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") { el.classList.add("is-in"); return; }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) { el.classList.add("is-in"); io.disconnect(); }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+function RevealSection({ className = "", delay, children, cascade = false }: { className?: string; delay?: string; children: React.ReactNode; cascade?: boolean }) {
+  const ref = useReveal<HTMLDivElement>();
+  const style = delay ? ({ ["--reveal-delay" as string]: delay } as React.CSSProperties) : undefined;
+  return <div ref={ref} className={`reveal-scroll${cascade ? " cascade" : ""}${className ? ` ${className}` : ""}`} style={style}>{children}</div>;
+}
 
 // ── BYOK (BYO API keys): client-only, stays in localStorage; sent as x-api-key header
 //        and proxied by netlify/functions/chat.ts (dumb forwarder) to Anthropic/OpenAI/OpenRouter.
@@ -489,7 +515,7 @@ export default function Page() {
                   <span className="neon neon-yellow neon-glow" aria-hidden={false}>FR!sky</span>
                   <span className="text-white/50">× Claude Design · Netlify OSS · 01 — Opening</span>
                 </div>
-                <h1 className="reveal title-glow font-display text-[52px] font-[800] leading-[0.92] tracking-[-0.05em] text-white sm:text-[76px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
+                <h1 className="reveal title-glow font-display text-[56px] font-[800] leading-[0.9] tracking-[-0.055em] text-white sm:text-[88px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
                   {t.title}
                   <span className="neon neon-cyan neon-glow text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "1.4s" }} aria-hidden>.</span>
                 </h1>
@@ -497,10 +523,12 @@ export default function Page() {
                   {t.ledeA}{" "}
                   <span className="font-semibold text-white">{t.ledeB}</span>
                 </p>
-                <div className="reveal mt-4 flex flex-wrap items-center gap-2 font-mono text-[10px] tracking-[0.14em] uppercase" style={{ ["--reveal-delay" as string]: "280ms" }}>
+                <div className="reveal mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] tracking-[0.14em] uppercase" style={{ ["--reveal-delay" as string]: "280ms" }}>
                   <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">MIT · fork it</span>
+                  <span className="h-3 w-px bg-white/10" aria-hidden />
                   <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">BYOK · $3/1M</span>
-                  <span className="rounded-full border-[#FFD100]/30 bg-[#FFD100]/10 px-2.5 py-1 text-[#FFD100]">frk_live_ gate</span>
+                  <span className="h-3 w-px bg-white/10" aria-hidden />
+                  <span className="neon neon-yellow neon-soft rounded-full border-[#FFD100]/30 bg-[#FFD100]/10 px-2.5 py-1 text-[#FFD100]">frk_live_ gate</span>
                 </div>
               </div>
               <div className="hidden shrink-0 items-center gap-2 sm:flex">
@@ -518,13 +546,13 @@ export default function Page() {
               <div className="flex items-center gap-1 rounded-full border-2 border-white bg-[#191424] p-1">
                 <button
                   onClick={() => setTab("disenos")}
-                  className={`rounded-full px-3 py-1.5 font-mono text-[13px] font-bold ${tab === "disenos" ? "bg-[#FFD100] text-[#121212]" : "text-white/50 hover:text-white"}`}
+                  className={`press rounded-full px-3 py-1.5 font-mono text-[13px] font-bold ${tab === "disenos" ? "bg-[#FFD100] text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
                   {t.tabs[0]}
                 </button>
                 <button
                   onClick={() => setTab("sistemas")}
-                  className={`rounded-full px-3 py-1.5 font-mono text-[13px] ${tab === "sistemas" ? "bg-white text-[#121212]" : "text-white/50 hover:text-white"}`}
+                  className={`press rounded-full px-3 py-1.5 font-mono text-[13px] ${tab === "sistemas" ? "bg-white text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
                   {t.tabs[1]} <span className="opacity-60" aria-hidden>
                     →
@@ -545,14 +573,14 @@ export default function Page() {
                 {t.bannerTitle}
               </div>
               <p className="mt-1.5 max-w-2xl text-[13px] leading-5 text-[#A49CB4]">{t.bannerBody}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Link href="/admin" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#00E5FF] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
-                  {t.adminPill}
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Link href="/admin" className="press inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#00E5FF] px-4 py-2 font-mono text-[11px] font-[800] tracking-wide text-[#121212] shadow-[0_0_28px_rgba(0,229,255,0.35)]">
+                  {t.adminPill} <span aria-hidden>→</span>
                 </Link>
-                <a href="https://friskydev.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
+                <a href="https://friskydev.com" target="_blank" rel="noreferrer" className="press inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
                   friskydev.com <span aria-hidden>↗</span>
                 </a>
-                <a href="https://github.com/friskypup/open-claude-design" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-white px-3 py-1.5 font-mono text-[11px] font-bold text-[#121212]">
+                <a href="https://github.com/FriskyDevelopments/open-claude-design" target="_blank" rel="noreferrer" className="press inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 font-mono text-[11px] font-bold text-white/80 hover:border-white/40 hover:text-white">
                   Ver repo <span aria-hidden>↗</span>
                 </a>
               </div>
@@ -586,8 +614,9 @@ export default function Page() {
                 ))}
               </div>
             </div>
+            <div className="act-rule" aria-hidden><i /></div>
             {/* act 02: the four doors rise one after another */}
-            <div className="reveal mt-8" style={{ ["--reveal-delay" as string]: "480ms" }}>
+            <RevealSection className="mt-8" cascade>
               <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
                 {t.make} <span className="ml-2 text-[#FFD100]/60">{t.act2}</span>
               </div>
@@ -600,9 +629,10 @@ export default function Page() {
               <p className="mt-2 font-mono text-[10px] tracking-wide text-white/30">
                 {t.pipeline} <code className="text-white/50">src/app/globals.css</code>{t.pipelineB}
               </p>
-            </div>
+            </RevealSection>
             {/* act 03: the gallery wall settles in */}
-            <div className="reveal mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ ["--reveal-delay" as string]: "620ms" }}>
+            <div className="act-rule" aria-hidden><i /></div>
+            <RevealSection className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" cascade>
               <ProjectCard title="Nocturne" subtitle={lang === "es" ? "Visto hace 52 min" : "Viewed 52 min ago"} />
               <ProjectCard title="Code Pup" subtitle={lang === "es" ? "Editado anteayer" : "Edited the day before"} />
               <ProjectCard title="Spec files shared" subtitle={lang === "es" ? "Visto hace 19 h" : "Viewed 19 h ago"} />
@@ -647,9 +677,10 @@ export default function Page() {
                   <div className="font-mono text-[11px] tracking-wide text-white/40">Design system sync</div>
                 </div>
               </div>
-            </div>
+            </RevealSection>
+            <div className="act-rule" aria-hidden><i /></div>
             {/* act 04: the money shot */}
-            <div className="reveal mt-10" style={{ ["--reveal-delay" as string]: "740ms" }}>
+            <RevealSection className="mt-10">
               <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">{lang === "es" ? "Act 04 — " : "Act 04 — "}<span className="neon neon-amethyst neon-glow text-[#9D00FF]">{lang === "es" ? "el dinero, no el por ciento" : "the money, not the percent"}</span></div>
               <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">{t.benefitsHead}</h2>
               <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">{t.benefitsSub}</p>
@@ -684,7 +715,7 @@ export default function Page() {
                   <span className="font-bold text-white">Para equipos:</span> tu agencia hostea; cada cliente BYOK — sin bill compartido.
                 </div>
               </div>
-            </div>
+            </RevealSection>
             <div className="mt-8 rounded-xl border-2 border-white bg-[#191424] px-4 py-4 shadow-[0_8px_0_rgba(0,0,0,.4)]">
               <div className="font-mono text-[11px] tracking-[0.2em] text-[#FFD100] uppercase">Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical</div>
               <p className="mt-1 max-w-3xl text-[12px] leading-5 text-white/50">
