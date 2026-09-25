@@ -36,7 +36,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${bricolage.variable} ${manrope.variable} ${jetbrains.variable} ${caveat.variable} h-full antialiased dark`}>
-      <body className="min-h-full bg-[#121212] text-zinc-100">{children}</body>
+      <body className="min-h-full bg-[#121212] text-zinc-100">
+        {/* cinematic frame: grain + lens vignette, always on, never interactive */}
+        <div className="film-grain" aria-hidden />
+        <div className="film-vignette" aria-hidden />
+        {children}
+      </body>
     </html>
   );
 }

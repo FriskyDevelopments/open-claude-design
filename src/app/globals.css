@@ -3,6 +3,7 @@
 /* ── PUPFR!SKY tweak on Claude Design ──────────────
    Base is Claude's gallery; palette is Pup's.
    Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst.
+   Cinematic layer: grain, drift, light leaks, halation.
    ────────────────────────────────────────────────── */
 @theme inline {
   --color-bg: #121212;
@@ -50,19 +51,86 @@ body {
   color: var(--color-text);
 }
 
-/* aurora wash behind the app — subtle, like pupfrisky.com */
+/* ═══════════════════════════════════════════════════
+   CINEMATIC STACK — aurora wash + slow color drift
+   (the room never stands still; it breathes at 0.3 fps)
+   ═══════════════════════════════════════════════════ */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: -3;
   pointer-events: none;
   background:
     radial-gradient(56vw 44vw at 6% -8%, rgba(255, 209, 0, 0.07), transparent 60%),
     radial-gradient(52vw 44vw at 98% 2%, rgba(157, 0, 255, 0.09), transparent 60%),
     radial-gradient(60vw 50vw at 50% 106%, rgba(0, 229, 255, 0.06), transparent 62%),
     linear-gradient(180deg, #140f1e 0%, #121212 42%, #0b001a 100%);
+  animation: aurora-drift 26s ease-in-out infinite alternate;
 }
+@keyframes aurora-drift {
+  0% { transform: scale(1) translate(0, 0); filter: hue-rotate(0deg) brightness(1); }
+  50% { transform: scale(1.06) translate(-1.2%, 1%); filter: hue-rotate(6deg) brightness(1.04); }
+  100% { transform: scale(1) translate(1%, -1.2%); filter: hue-rotate(-5deg) brightness(1); }
+}
+
+/* slow conic light leak — top right, behind everything */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -40%;
+  z-index: -2;
+  pointer-events: none;
+  background: conic-gradient(
+    from 210deg at 78% 12%,
+    transparent 0deg,
+    rgba(255, 209, 0, 0.05) 28deg,
+    transparent 60deg,
+    transparent 168deg,
+    rgba(0, 229, 255, 0.05) 198deg,
+    transparent 232deg,
+    transparent 284deg,
+    rgba(157, 0, 255, 0.06) 316deg,
+    transparent 348deg
+  );
+  filter: blur(60px);
+  animation: leak-spin 80s linear infinite;
+}
+@keyframes leak-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* film grain — full-viewport, animated, non-interactive */
+.film-grain {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.9s steps(4) infinite;
+}
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 1.4%); }
+  50% { transform: translate(1.6%, -2%); }
+  75% { transform: translate(-1%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* letterbox vignette — darkens the frame edges like a lens */
+.film-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 105% at 50% 42%, transparent 58%, rgba(0, 0, 0, 0.42) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.28) 0, transparent 7%, transparent 93%, rgba(0, 0, 0, 0.32) 100%);
+}
+
+/* ── micro cinematography ─────────────────────────── */
 
 /* die-cut sticker hover — thick white border + tilt */
 .sticker-hover {
@@ -77,4 +145,54 @@ body::before {
   box-shadow:
     0 10px 0 rgba(0, 0, 0, 0.5),
     0 22px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* reveal: elements rise out of the dark like title cards */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(26px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.reveal {
+  opacity: 0;
+  animation: rise-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; opacity: 1; }
+  body::before, body::after, .film-grain { animation: none; }
+}
+
+/* hero glow: soft bloom behind big display type */
+.title-glow {
+  text-shadow:
+    0 0 1px rgba(247, 245, 242, 0.9),
+    0 0 22px rgba(255, 209, 0, 0.16),
+    0 0 64px rgba(157, 0, 255, 0.12);
+}
+
+/* scanline shimmer across cards — light passes over, once per rest */
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: -60% -20%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 42%, rgba(255, 255, 255, 0.07) 50%, transparent 58%);
+  transform: translateX(-110%);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-sheen:hover::after {
+  transform: translateX(110%);
+}
+
+/* breathing dot — the live indicator pulses like a signal light */
+@keyframes breathe {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.5); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(0, 229, 255, 0); }
+}
+.breathe {
+  animation: breathe 2.6s ease-in-out infinite;
 }

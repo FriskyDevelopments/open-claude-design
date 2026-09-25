@@ -229,7 +229,7 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
   };
   return (
     <div className="group w-full text-left">
-      <div className={`sticker-hover relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 ${glow[variant]}`}>
+      <div className={`sticker-hover card-sheen relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 ${glow[variant]}`}>
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-black/30" aria-hidden />
         <div className="relative flex h-full items-center justify-center">
           {title === "Slides" && (
@@ -345,11 +345,16 @@ export default function Page() {
             </button>
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-7">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            {/* opening shot: eyebrow tc → title bloom → lede rises */}
+            <div className="reveal flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
               <div>
-                <div className="font-mono text-[10px] tracking-[0.22em] text-[#FFD100] uppercase">PUPFR!SKY × Claude Design</div>
-                <h1 className="font-display text-[30px] font-[800] tracking-[-0.04em] text-white sm:text-[36px]">Diseño</h1>
-                <p className="mt-1 max-w-xl text-[13px] leading-5 text-[#A49CB4]">
+                <div className="reveal font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
+                  PUPFR!SKY × Claude Design · Netlify OSS · 01 — Opening
+                </div>
+                <h1 className="reveal title-glow font-display text-[42px] font-[800] leading-[0.95] tracking-[-0.045em] text-white sm:text-[58px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
+                  Diseño
+                </h1>
+                <p className="reveal mt-2 max-w-xl text-[13px] leading-5 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
                   Claude&apos;s gallery, in PUPFR!SKY&apos;s Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —{" "}
                   <span className="text-white">tweaked, not cloned.</span>
                 </p>
@@ -362,7 +367,7 @@ export default function Page() {
                 {hasKey ? "BYOK activo" : "Añadir API key"}
               </button>
             </div>
-            <div className="mt-6 flex items-center justify-between gap-3">
+            <div className="reveal mt-6 flex items-center justify-between gap-3" style={{ ["--reveal-delay" as string]: "300ms" }}>
               <div className="flex items-center gap-1 rounded-full border-2 border-white bg-[#191424] p-1">
                 <button
                   onClick={() => setTab("disenos")}
@@ -384,7 +389,7 @@ export default function Page() {
                 <button className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10">≡</button>
               </div>
             </div>
-            <div className="mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-5">
+            <div className="reveal mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-5" style={{ ["--reveal-delay" as string]: "380ms" }}>
               <div className="flex items-center gap-2 font-display text-[13px] font-[800] tracking-[-0.02em] text-white">
                 <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
                 Claude Design ahora está aquí — con tweak PUPFR!SKY
@@ -416,8 +421,11 @@ export default function Page() {
                 </div>
               )}
             </div>
-            <div className="mt-8">
-              <div className="font-mono text-[11px] tracking-[0.2em] text-white/35 uppercase">Make something new</div>
+            {/* act 02: the four doors rise one after another */}
+            <div className="reveal mt-8" style={{ ["--reveal-delay" as string]: "480ms" }}>
+              <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
+                Make something new <span className="ml-2 text-[#FFD100]/60">· act 02 — four doors</span>
+              </div>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 <MakeCard title="Slides" beta variant="yellow" />
                 <MakeCard title="Design" beta variant="amethyst" />
@@ -428,7 +436,8 @@ export default function Page() {
                 Figma Tokens → Style Dictionary → <code className="text-white/50">src/app/globals.css</code> · react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.
               </p>
             </div>
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* act 03: the gallery wall settles in */}
+            <div className="reveal mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ ["--reveal-delay" as string]: "620ms" }}>
               <ProjectCard title="Nocturne" subtitle="Visto hace 52 min" />
               <ProjectCard title="Code Pup" subtitle="Editado anteayer" />
               <ProjectCard title="Spec files shared" subtitle="Visto hace 19 h" />
@@ -474,8 +483,10 @@ export default function Page() {
                 </div>
               </div>
             </div>
-            <div className="mt-10">
-              <h2 className="font-display text-[13px] font-[800] tracking-wide text-white">Por qué usar este clon en vez de claude.ai</h2>
+            {/* act 04: the money shot */}
+            <div className="reveal mt-10" style={{ ["--reveal-delay" as string]: "740ms" }}>
+              <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">Act 04 — el dinero, no el por ciento</div>
+              <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">Por qué usar este clon en vez de claude.ai</h2>
               <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">Mismo diseño Claude, pero tuyo. Con Mobbin Pro como spec y tu propia key — sin suscripción, sin lock-in.</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {[
