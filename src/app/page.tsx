@@ -336,9 +336,11 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
     amethyst: "text-[#9D00FF]",
     coal: "text-white/60",
   };
+  const num = { Slides: "01", Design: "02", "Design in codebase": "03", "Design System": "04" }[title] ?? "··";
   return (
-    <div className="group w-full text-left">
-      <div className={`sticker-hover card-sheen relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 ${glow[variant]}`}>
+    <button type="button" className="group w-full cursor-pointer text-left" aria-label={`${title}${beta ? " (Beta)" : ""}`}>
+      <div className={`sticker-hover card-sheen relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-[#FFD100] ${glow[variant]}`}>
+        <span className="absolute left-2.5 top-2 z-10 rounded-full border border-white/15 bg-black/55 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-white/70 backdrop-blur" aria-hidden>{num}</span>
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-black/30" aria-hidden />
         <div className="relative flex h-full items-center justify-center">
           {title === "Slides" && (
@@ -390,19 +392,20 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
           )}
         </div>
       </div>
-      <div className="mt-2 flex items-center gap-1.5 text-[13px] font-[700] tracking-[-0.02em] text-white/90">
+      <div className="mt-2 flex items-center gap-1.5 text-[13px] font-[700] tracking-[-0.02em] text-white/90 transition-colors group-hover:text-white">
         <span aria-hidden className={accent[variant]}>
           ●
         </span>{" "}
         {title} {beta && <span className="rounded-full border border-white/15 bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/60">Beta</span>}
+        <span aria-hidden className="ml-auto text-white/0 transition-all group-hover:translate-x-0.5 group-hover:text-[#FFD100]">→</span>
       </div>
-    </div>
+    </button>
   );
 }
 
 function ProjectCard({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="sticker-hover overflow-hidden rounded-[18px] border-white bg-[#191424]">
+    <article className="sticker-hover card-sheen overflow-hidden rounded-[18px] border-white bg-[#191424]">
       <div className="relative aspect-[16/10] bg-[#121212]">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-black/20" aria-hidden />
         {title === "Nocturne" && (
@@ -431,7 +434,7 @@ function ProjectCard({ title, subtitle }: { title: string; subtitle: string }) {
           <span>{subtitle.includes("Editado") ? "🔒" : "▭"}</span> <span>·</span> <span>{subtitle}</span>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
@@ -478,19 +481,27 @@ export default function Page() {
             </button>
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-7">
-            {/* opening shot: eyebrow tc → title bloom → lede rises */}
+            {/* opening shot: eyebrow tc → title bloom → lede rises · FR!sky voice, Framer-grade */}
             <div className="reveal flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
               <div>
-                <div className="reveal font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
-                  {t.eyebrow}
+                <div className="reveal flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
+                  <span className="breathe inline-block h-1.5 w-1.5 rounded-full bg-[#00E5FF]" aria-hidden />
+                  <span className="neon neon-yellow neon-glow" aria-hidden={false}>FR!sky</span>
+                  <span className="text-white/50">× Claude Design · Netlify OSS · 01 — Opening</span>
                 </div>
-                <h1 data-lang={lang} className="reveal title-glow font-display text-[42px] font-[800] leading-[0.95] tracking-[-0.045em] text-white sm:text-[58px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
+                <h1 className="reveal title-glow font-display text-[52px] font-[800] leading-[0.92] tracking-[-0.05em] text-white sm:text-[76px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
                   {t.title}
+                  <span className="neon neon-cyan neon-glow text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "1.4s" }} aria-hidden>.</span>
                 </h1>
-                <p className="reveal mt-2 max-w-xl text-[13px] leading-5 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
+                <p className="reveal mt-3 max-w-xl text-[14px] leading-6 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
                   {t.ledeA}{" "}
-                  <span className="text-white">{t.ledeB}</span>
+                  <span className="font-semibold text-white">{t.ledeB}</span>
                 </p>
+                <div className="reveal mt-4 flex flex-wrap items-center gap-2 font-mono text-[10px] tracking-[0.14em] uppercase" style={{ ["--reveal-delay" as string]: "280ms" }}>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">MIT · fork it</span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">BYOK · $3/1M</span>
+                  <span className="rounded-full border-[#FFD100]/30 bg-[#FFD100]/10 px-2.5 py-1 text-[#FFD100]">frk_live_ gate</span>
+                </div>
               </div>
               <div className="hidden shrink-0 items-center gap-2 sm:flex">
                 <LangToggle lang={lang} setLang={setLang} />
@@ -525,12 +536,15 @@ export default function Page() {
                 <button className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10">≡</button>
               </div>
             </div>
-            <div className="reveal mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-5" style={{ ["--reveal-delay" as string]: "380ms" }}>
-              <div className="flex items-center gap-2 font-display text-[13px] font-[800] tracking-[-0.02em] text-white">
+            <div className="reveal card-sheen mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-6" style={{ ["--reveal-delay" as string]: "380ms" }}>
+              <div className="flex items-center gap-2">
                 <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
+                <span className="neon neon-cyan neon-glow font-mono text-[10px] tracking-[0.24em] text-[#00E5FF] uppercase">Live · Netlify OSS</span>
+              </div>
+              <div className="mt-2 font-display text-[22px] font-[800] leading-tight tracking-[-0.03em] text-white sm:text-[26px]">
                 {t.bannerTitle}
               </div>
-              <p className="mt-1 text-[13px] leading-5 text-[#A49CB4]">{t.bannerBody}</p>
+              <p className="mt-1.5 max-w-2xl text-[13px] leading-5 text-[#A49CB4]">{t.bannerBody}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link href="/admin" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#00E5FF] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
                   {t.adminPill}
@@ -562,12 +576,12 @@ export default function Page() {
               <div className="ticker-track flex w-max items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] text-white/35 uppercase">
                 {Array.from({ length: 2 }).map((_, dup) => (
                   <span key={dup} className="flex items-center gap-8">
-                    <span>FR!sky × Claude Design</span><span className="text-[#FFD100]">●</span>
-                    <span>BYOK — tu key, tus costos</span><span className="text-[#00E5FF]">●</span>
-                    <span>Admin · frk_live_ keys</span><span className="text-[#9D00FF]">●</span>
-                    <span>Mobbin platform: ios|web fixed</span><span className="text-[#FFD100]">●</span>
-                    <span>Netlify 1-click · Sin backend</span><span className="text-[#00E5FF]">●</span>
-                    <span>1440px proof — breathtaking or it doesn&apos;t ship</span><span className="text-[#9D00FF]">●</span>
+                    <span>FR!sky × Claude Design</span><span className="neon neon-yellow neon-soft text-[#FFD100]">●</span>
+                    <span>BYOK — tu key, tus costos</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "2s" }}>●</span>
+                    <span>Admin · frk_live_ keys</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "4s" }}>●</span>
+                    <span>Mobbin platform: ios|web fixed</span><span className="neon neon-yellow neon-soft text-[#FFD100]" style={{ ["--flicker-delay" as string]: "5.5s" }}>●</span>
+                    <span>Netlify 1-click · Sin backend</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "7s" }}>●</span>
+                    <span>1440px proof — breathtaking or it doesn&apos;t ship</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "8.5s" }}>●</span>
                   </span>
                 ))}
               </div>
@@ -636,7 +650,7 @@ export default function Page() {
             </div>
             {/* act 04: the money shot */}
             <div className="reveal mt-10" style={{ ["--reveal-delay" as string]: "740ms" }}>
-              <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">{lang === "es" ? "Act 04 — el dinero, no el por ciento" : "Act 04 — the money, not the percent"}</div>
+              <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">{lang === "es" ? "Act 04 — " : "Act 04 — "}<span className="neon neon-amethyst neon-glow text-[#9D00FF]">{lang === "es" ? "el dinero, no el por ciento" : "the money, not the percent"}</span></div>
               <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">{t.benefitsHead}</h2>
               <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">{t.benefitsSub}</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
