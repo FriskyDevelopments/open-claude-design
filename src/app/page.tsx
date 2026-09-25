@@ -518,8 +518,9 @@ export default function Page() {
                   <span className="text-white/50">× Claude Design · Netlify OSS · 01 — Opening</span>
                 </div>
                 <h1 className="reveal title-glow font-display text-[56px] font-[800] leading-[0.9] tracking-[-0.055em] text-white sm:text-[88px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
-                  {t.title}
-                  <span className="neon neon-cyan neon-glow text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "1.4s" }} aria-hidden>.</span>
+                  <span className="hero-bloom" aria-hidden />
+                  <span className="relative">{t.title}</span>
+                  <span className="neon neon-cyan neon-glow relative text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "1.4s" }} aria-hidden>.</span>
                 </h1>
                 <p className="reveal mt-3 max-w-xl text-[14px] leading-6 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
                   {t.ledeA}{" "}

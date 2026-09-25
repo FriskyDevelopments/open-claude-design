@@ -218,6 +218,8 @@ body::after {
     0 0 64px rgba(157, 0, 255, 0.12);
 }
 
+/* monument: the title is a place. A stroked ghost of the same word
+   drifts behind the solid — depth print can't do, Framer won't bother. */
 /* section divider: hairline with a neon node — rhythm between acts */
 .act-rule {
   display: flex;
