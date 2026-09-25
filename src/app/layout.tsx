@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   creator: "Frisky Developments",
   openGraph: {
     type: "website",
-    locale: "es_ES",
+    locale: "en_US",
     siteName: "Open Claude Design",
     title: "Diseño — FR!sky × Claude Design · Netlify Open Source",
     description: "Cloned Diseños gallery + Admin frk_live_ keys + Mobbin platform fix. Every screen ships breathtaking or it doesn't ship. 1440px proof.",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${bricolage.variable} ${manrope.variable} ${jetbrains.variable} ${caveat.variable} h-full antialiased dark`}>
+    <html lang="en" className={`${bricolage.variable} ${manrope.variable} ${jetbrains.variable} ${caveat.variable} h-full antialiased dark`}>
       <body className="min-h-full bg-[#121212] text-zinc-100">
         {/* cinematic frame: grain + lens vignette, always on, never interactive */}
         <div className="film-grain" aria-hidden />

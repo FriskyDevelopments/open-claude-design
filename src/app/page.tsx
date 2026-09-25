@@ -468,6 +468,8 @@ export default function Page() {
   const { keys, save, hasKey } = useByok();
   const [byokOpen, setByokOpen] = useState(false);
   const [tab, setTab] = useState<"disenos" | "sistemas">("disenos");
+  // English first: default "en" unless the visitor explicitly chose Spanish
+  // (?lang=es wins, then saved preference — a saved "es" is always honored).
   const [lang, setLang] = useState<"es" | "en">(() => {
     // Render-time read: query param wins instantly (no effect delay, no screenshot race).
     try {
@@ -476,9 +478,10 @@ export default function Page() {
       const saved = localStorage.getItem("open-claude-design:lang");
       if (saved === "es" || saved === "en") return saved;
     } catch {}
-    return "es";
+    return "en";
   });
-  // Mount-time language: ?lang= wins (shared links), then saved preference, then browser.
+  // Mount-time language: ?lang= wins (shared links), then saved preference.
+  // No browser sniffing — first impression is always English unless chosen otherwise.
   // After mount, ONLY the toggle changes lang (optimistic setLang + replaceState).
   // No polling — a poll would clobber the user's click with a stale read.
   useEffect(() => {
@@ -487,7 +490,6 @@ export default function Page() {
       if (q === "es" || q === "en") { setLang(q); localStorage.setItem("open-claude-design:lang", q); return; }
       const saved = localStorage.getItem("open-claude-design:lang");
       if (saved === "es" || saved === "en") { setLang(saved); return; }
-      if (navigator.language?.startsWith("en")) setLang("en");
     } catch {}
   }, []);
   const t = COPY[lang];
