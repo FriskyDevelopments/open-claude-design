@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ── PUPFR!SKY tweak on Claude Design ──────────────
+/* ── FR!sky tweak on Claude Design ──────────────
    Base is Claude's gallery; palette is Pup's.
    Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst.
    Cinematic layer: grain, drift, light leaks, halation.
@@ -196,3 +196,8 @@ body::after {
 .breathe {
   animation: breathe 2.6s ease-in-out infinite;
 }
+
+/* ticker: infinite studio signal */
+.ticker-track { animation: ticker-scroll 32s linear infinite; }
+@keyframes ticker-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }

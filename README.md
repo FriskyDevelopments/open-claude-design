@@ -1,6 +1,6 @@
 <div align="center">
 
-# Diseño — PUPFR!SKY × Claude Design
+# Diseño — FR!sky × Claude Design
 
 ### The only open repo that clones `claude.ai` Diseño (Sep 2026) — breathtaking or it doesn't ship.
 
@@ -21,7 +21,7 @@
 | **BYOK — your key, your costs** | `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `OPENROUTER_API_KEY` lives only in `localStorage`, sent as `x-api-key`, never on server. ~$3 / 1M Sonnet tokens vs $20/mo subscription. |
 | **Total privacy** | `netlify/functions/chat.ts` is a dumb proxy — no DB, no logs. Your prompts never leave browser → upstream. |
 | **Any model, same Claude design** | Swap Claude/GPT-5/Gemini (OpenRouter) without swapping UI. Same artifact canvas. |
-| **Truly open source** | MIT — fork, rebrand for your agency, `PUPFR!SKY` skin `#121212 / #FFD100 / #00E5FF / #9D00FF` + die-cut `border-2 border-white`. |
+| **Truly open source** | MIT — fork, rebrand for your agency, `FR!sky` skin `#121212 / #FFD100 / #00E5FF / #9D00FF` + die-cut `border-2 border-white`. |
 | **From Mobbin PNG to repo** | Mobbin Pro = spec only → this is `gallery + generative canvas + streaming` wired to `mobbin_search_*` (platform: `ios|web` fixed) |
 | **Netlify 1-click + Admin** | `netlify.toml + @netlify/plugin-nextjs` 60s deploy. [Apply for Netlify Open Source perks](open-source.netlify.com) — see [entry pack](docs/NETLIFY_OPEN_SOURCE.md). |
 | **For teams** | One gallery, many BYOK keys — deploy once, each client brings their own key, no shared bill. |
@@ -57,7 +57,7 @@ Works: `claude-sonnet-4-20250514` · `gpt-5` · any OpenRouter model (same desig
 
 ## Admin Center (all tools protected like Mobbin)
 
-`src/app/admin/page.tsx` → `/admin` — owner gate. MVP: `pupfrisky-owner`; prod: **Supabase** owner/admin (`frisky-gpt-mcp/src/http-server.mjs:FRISKY_SUPABASE_OWNER_EMAILS`). Mint `frk_live_…` (**name · scopes · expiry 30d/90d/never · copy-once · revoke**) → `toolPolicy` + `audit_log`. Every `tools/call` without valid **owner JWT or `frk_live_`** → `401 Frisky Client Access login required`.
+`src/app/admin/page.tsx` → `/admin` — owner gate. MVP: `frisky-owner`; prod: **Supabase** owner/admin (`frisky-gpt-mcp/src/http-server.mjs:FRISKY_SUPABASE_OWNER_EMAILS`). Mint `frk_live_…` (**name · scopes · expiry 30d/90d/never · copy-once · revoke**) → `toolPolicy` + `audit_log`. Every `tools/call` without valid **owner JWT or `frk_live_`** → `401 Frisky Client Access login required`.
 
 Scopes in UI: `frisky.mcp` (all tools) + `mobbin:read` + `memory:read` + `github:read` + `model:live`.
 
@@ -65,7 +65,7 @@ Zebuar note: your `zat_…` is expired (`check`). After `zeabur auth login` → 
 
 ## Support — Whop & Donations
 
-Icon row (left→right): **[Whop](https://whop.com/friskydev)** — PUPFR!SKY storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/pupfrisky)** · **[Buy Me a Coffee](https://buymeacoffee.com/pupfrisky)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it pup: one Whop checkout or coffee = more 1440px jewels.
+Icon row (left→right): **[Whop](https://whop.com/friskydev)** — FR!sky storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/friskydev)** · **[Buy Me a Coffee](https://buymeacoffee.com/friskydev)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it pup: one Whop checkout or coffee = more 1440px jewels.
 
 In-app: Sidebar **SupportRail** + footer **Support strip** (`src/components/SupportRail.tsx` — `LINKS` source-of-truth).
 

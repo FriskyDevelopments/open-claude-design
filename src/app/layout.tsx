@@ -12,9 +12,9 @@ const caveat = Caveat({ variable: "--font-caveat", weight: ["600", "700"], subse
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "Diseño — PUPFR!SKY × Claude Design · Open source · Netlify OSS", template: "%s · Open Claude Design" },
+  title: { default: "Diseño — FR!sky × Claude Design · Open source · Netlify OSS", template: "%s · Open Claude Design" },
   description:
-    "Open-source clone of claude.ai Diseño (Diseños / Sistemas + artifact canvas). Clean rebuild — PUPFR!SKY Obsidian #121212 + Yellow/Cyan/Amethyst · die-cut · BYOK · Admin frk_live_ · Mobbin gated · Netlify 1-click. Every screen ships breathtaking (1440px proof).",
+    "Open-source clone of claude.ai Diseño (Diseños / Sistemas + artifact canvas). Clean rebuild — FR!sky Obsidian #121212 + Yellow/Cyan/Amethyst · die-cut · BYOK · Admin frk_live_ · Mobbin gated · Netlify 1-click. Every screen ships breathtaking (1440px proof).",
   applicationName: "Open Claude Design",
   keywords: ["claude", "claude design", "open source", "next.js", "tailwind", "shadcn", "netlify", "awwwards", "mcp", "figma tokens", "mobbin", "zeabur"],
   authors: [{ name: "Frisky Developments", url: "https://friskydev.com" }],
@@ -23,11 +23,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     siteName: "Open Claude Design",
-    title: "Diseño — PUPFR!SKY × Claude Design · Netlify Open Source",
+    title: "Diseño — FR!sky × Claude Design · Netlify Open Source",
     description: "Cloned Diseños gallery + Admin frk_live_ keys + Mobbin platform fix. Every screen ships breathtaking or it doesn't ship. 1440px proof.",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Open Claude Design — Diseño + Admin + Netlify OSS · PUPFR!SKY tweak" }],
+    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Open Claude Design — Diseño + Admin + Netlify OSS · FR!sky tweak" }],
   },
-  twitter: { card: "summary_large_image", title: "Open Claude Design — PUPFR!SKY × Claude · Netlify OSS", description: "1-click Deploy to Netlify. BYOK. Admin frk_live_. Mobbin gated. Awwwards floor." },
+  twitter: { card: "summary_large_image", title: "Open Claude Design — FR!sky × Claude · Netlify OSS", description: "1-click Deploy to Netlify. BYOK. Admin frk_live_. Mobbin gated. Awwwards floor." },
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.svg" },

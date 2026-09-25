@@ -1,7 +1,7 @@
 "use client";
 
 // SupportRail — Whop + Donations + Sponsors (breathtaking: no default widgets)
-// All links open in new tab. Icons are inline (no extra deps). PUPFR!SKY palette:
+// All links open in new tab. Icons are inline (no extra deps). FR!sky palette:
 // Obsidian #121212 / Hazard Yellow #FFD100 / Cyan #00E5FF / Amethyst #9D00FF + die-cut border-2 white
 // Where it shows: imported by Sidebar (rail) + page footer CTA strip. Source-of-truth for
 // support URLs lives here and is re-exported for README/OG sync — keep README badges in sync with LINKS.
@@ -14,10 +14,10 @@ export const LINKS = {
   // Donations: add all active rails (Netlify Open Source perk != money — this is optional support)
   donations: {
     // Gofundme / Ko-fi / Buy Me a Coffee / Open Collective — fill what you actually use
-    kofi: "https://ko-fi.com/pupfrisky",
+    kofi: "https://ko-fi.com/friskydev",
     // Paypal/Whop checkout/etc — placeholder for the real link after you hook checkout
     paypal: "https://whop.com/friskydev/checkout",
-    bmc: "https://buymeacoffee.com/pupfrisky",
+    bmc: "https://buymeacoffee.com/friskydev",
   },
   // Source + live deploys (for icon row)
   repo: "https://github.com/FriskyDevelopments/open-claude-design",
@@ -68,7 +68,7 @@ export function SupportRailCompact() {
           <IconWhop />
         </span>
         <span className="min-w-0">
-          <span className="block font-display text-[12px] font-[800] leading-none">Whop — PUPFR!SKY</span>
+          <span className="block font-display text-[12px] font-[800] leading-none">Whop — FR!sky</span>
           <span className="block font-mono text-[10px] leading-none text-black/50">Storefront · perks · checkout</span>
         </span>
         <span className="ml-auto font-bold text-black/30">

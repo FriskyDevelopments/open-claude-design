@@ -23,7 +23,7 @@ function useByok() {
   return { keys, save, hasKey: Boolean(keys.anthropic || keys.openai || keys.openrouter) };
 }
 
-function ByokModal({ open, onClose, keys, onSave }: { open: boolean; onClose: () => void; keys: ByokKeys; onSave: (k: ByokKeys) => void }) {
+function ByokModal({ open, onClose, keys, onSave, t }: { open: boolean; onClose: () => void; keys: ByokKeys; onSave: (k: ByokKeys) => void; t: (typeof COPY)[Lang] }) {
   const [draft, setDraft] = useState(keys);
   useEffect(() => setDraft(keys), [keys]);
   if (!open) return null;
@@ -32,11 +32,10 @@ function ByokModal({ open, onClose, keys, onSave }: { open: boolean; onClose: ()
       <div className="w-full max-w-[560px] rounded-[22px] border-2 border-white bg-[#191424] p-6 shadow-[0_16px_0_rgba(0,0,0,.5),0_22px_48px_rgba(0,0,0,.5)] sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <div className="font-mono text-[10px] tracking-[0.22em] text-[#6E6680] uppercase">PUPFR!SKY × Claude Design · BYOK</div>
-            <h2 className="mt-1 font-display text-[20px] font-[800] tracking-[-0.03em] text-[#F7F5F2]">Tu key, tus costos</h2>
+            <div className="font-mono text-[10px] tracking-[0.22em] text-[#6E6680] uppercase">{t.modalEyebrow}</div>
+            <h2 className="mt-1 font-display text-[20px] font-[800] tracking-[-0.03em] text-[#F7F5F2]">{t.modalTitle}</h2>
             <p className="mt-1 max-w-[40ch] text-[13px] leading-5 text-[#A49CB4]">
-              BYOK real: tu key vive <span className="font-semibold text-[#F7F5F2]">solo en localStorage</span> de tu navegador. Nunca toca nuestro servidor — el
-              Netlify edge la reenvía con <code className="rounded bg-white/10 px-1 font-mono text-[11px]">x-api-key</code>.
+              {t.modalBodyA} <span className="font-semibold text-[#F7F5F2]">{t.modalBodyB}</span> {t.modalBodyC} <code className="rounded bg-white/10 px-1 font-mono text-[11px]">x-api-key</code>.
             </p>
           </div>
           <button onClick={onClose} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-white bg-white text-sm font-bold text-[#121212]">
@@ -73,7 +72,7 @@ function ByokModal({ open, onClose, keys, onSave }: { open: boolean; onClose: ()
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={onClose} className="h-9 rounded-full border-2 border-white bg-[#121212] px-5 font-mono text-[12px] font-bold text-white">
-            Cancelar
+            {t.cancel}
           </button>
           <button
             onClick={() => {
@@ -82,7 +81,7 @@ function ByokModal({ open, onClose, keys, onSave }: { open: boolean; onClose: ()
             }}
             className="h-9 rounded-full border-2 border-white bg-[#FFD100] px-5 font-mono text-[12px] font-[800] text-[#121212] shadow-[0_4px_0_rgba(0,0,0,.4)]"
           >
-            Guardar keys
+            {t.save}
           </button>
         </div>
       </div>
@@ -90,7 +89,117 @@ function ByokModal({ open, onClose, keys, onSave }: { open: boolean; onClose: ()
   );
 }
 
-function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boolean }) {
+function LangToggle({ lang, setLang }: { lang: "es" | "en"; setLang: (l: "es" | "en") => void }) {
+  // Instant optimistic UI (setLang now) + URL as source of truth (?lang=en wins,
+  // persisted by Page effect). <button> never navigates — no blank, no reload.
+  return (
+    <div className="grid grid-cols-2 gap-0.5 rounded-full border border-white/10 bg-white/5 p-0.5 font-mono text-[10px] font-bold" role="group" aria-label="Idioma / Language">
+      {(["es", "en"] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          onClick={() => {
+            try { localStorage.setItem("open-claude-design:lang", l); } catch {}
+            setLang(l);
+            try { window.history.replaceState(null, "", l === "es" ? "/" : "/?lang=en"); } catch {}
+          }}
+          aria-pressed={lang === l}
+          data-active={lang === l ? "1" : "0"}
+          className={`rounded-full px-2 py-1 uppercase tracking-wide transition-colors ${lang === l ? "bg-[#FFD100] text-[#121212]" : "text-white/40 hover:text-white"}`}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// FR!sky × Claude — bilingual copy deck. Sidebar keeps product Spanish labels
+// (Nuevo/Proyectos/…) as the Claude-product voice; everything else toggles.
+const COPY = {
+  es: {
+    eyebrow: "FR!sky × Claude Design · Netlify OSS · 01 — Opening",
+    byokBtn: "Añadir API key", byokBtnOn: "BYOK activo", byokPill: "BYOK", byokPillOn: "BYOK ✓",
+    title: "Diseño",
+    ledeA: "Claude's gallery, in FR!sky's Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —",
+    ledeB: "tweaked, not cloned.",
+    tabs: ["Diseños", "Sistemas de diseño"] as const,
+    bannerTitle: "Claude Design ahora está aquí — con tweak FR!sky",
+    bannerBody: "Claude's Presentaciones + Diseño como artefactos. Este clon respeta el layout, viste Obsidian + neones y el die-cut FR!sky.",
+    adminPill: "Admin · frk_live_ keys",
+    noKeyA: "Sin API key: modo demo.",
+    noKeyBtn: "Añadir API key",
+    noKeyB: "y pega tu",
+    noKeyC: "u",
+    noKeyD: "para artefactos reales. Todas las",
+    noKeyE: "requieren owner JWT o",
+    noKeyF: "(como Mobbin).",
+    hasKey: "BYOK ✓ — keys en",
+    hasKeyB: ". Prueba un prompt en",
+    hasKeyC: "arriba.",
+    make: "Make something new",
+    act2: "· act 02 — four doors",
+    pipeline: "Figma Tokens → Style Dictionary →",
+    pipelineB: "· react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.",
+    pinned: "Fijados", chats: "Chats y tareas",
+    supportHead: "Apoya — Keep it pup",
+    byokOn: "BYOK conectado", byokOff: "BYOK sin configurar",
+    benefitsHead: "Por qué usar este clon en vez de claude.ai",
+    benefitsSub: "Mismo diseño Claude, pero tuyo. Con Mobbin Pro como spec y tu propia key — sin suscripción, sin lock-in.",
+    modalEyebrow: "FR!sky × Claude Design · BYOK",
+    modalTitle: "Tu key, tus costos",
+    modalBodyA: "BYOK real: tu key vive",
+    modalBodyB: "solo en localStorage",
+    modalBodyC: "de tu navegador. Nunca toca nuestro servidor — el Netlify edge la reenvía con",
+    modalTip: "Tip: pega al menos una. `Design in codebase` usa streaming directo.",
+    cancel: "Cancelar", save: "Guardar keys",
+    openFooter: "Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical",
+    cardTitles: ["Slides", "Design", "Design in codebase", "Design System"] as const,
+  },
+  en: {
+    eyebrow: "FR!sky × Claude Design · Netlify OSS · 01 — Opening",
+    byokBtn: "Add API key", byokBtnOn: "BYOK active", byokPill: "BYOK", byokPillOn: "BYOK ✓",
+    title: "Design",
+    ledeA: "Claude's gallery, in FR!sky's Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —",
+    ledeB: "tweaked, not cloned.",
+    tabs: ["Designs", "Design systems"] as const,
+    bannerTitle: "Claude Design is here — with the FR!sky tweak",
+    bannerBody: "Claude's Slides + Design as artifacts. This clone keeps the layout, wears Obsidian + neons and the FR!sky die-cut.",
+    adminPill: "Admin · frk_live_ keys",
+    noKeyA: "No API key: demo mode.",
+    noKeyBtn: "Add API key",
+    noKeyB: "and paste your",
+    noKeyC: "or",
+    noKeyD: "for real artifacts. Every",
+    noKeyE: "needs an owner JWT or",
+    noKeyF: "(like Mobbin).",
+    hasKey: "BYOK ✓ — keys in",
+    hasKeyB: ". Try a prompt in",
+    hasKeyC: "above.",
+    make: "Make something new",
+    act2: "· act 02 — four doors",
+    pipeline: "Figma Tokens → Style Dictionary →",
+    pipelineB: "· react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.",
+    pinned: "Pinned", chats: "Chats & tasks",
+    supportHead: "Support — Keep it pup",
+    byokOn: "BYOK connected", byokOff: "BYOK not configured",
+    benefitsHead: "Why use this clone instead of claude.ai",
+    benefitsSub: "Same Claude design, but yours. Mobbin Pro as spec and your own key — no subscription, no lock-in.",
+    modalEyebrow: "FR!sky × Claude Design · BYOK",
+    modalTitle: "Your key, your costs",
+    modalBodyA: "Real BYOK: your key lives",
+    modalBodyB: "only in localStorage",
+    modalBodyC: "of your browser. It never touches our server — the Netlify edge forwards it with",
+    modalTip: "Tip: paste at least one. `Design in codebase` streams directly.",
+    cancel: "Cancel", save: "Save keys",
+    openFooter: "Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical",
+    cardTitles: ["Slides", "Design", "Design in codebase", "Design System"] as const,
+  },
+} as const;
+type Lang = keyof typeof COPY;
+
+function Sidebar({ onOpenByok, hasKey, lang }: { onOpenByok: () => void; hasKey: boolean; lang: Lang }) {
+  const t = COPY[lang];
   // Spec: DISENO rail 248px · Obsidian #121212 + white hairlines · 11px Mono caps · 4-supporting colors only
   return (
     <aside className="hidden w-[248px] shrink-0 flex-col border-r border-white/10 bg-[#121212]/85 backdrop-blur-xl lg:flex">
@@ -113,8 +222,8 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
         </div>
       </div>
       <div className="mx-2 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2.5">
-        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">PUPFR!SKY — GOOD PUP. BAD BOI.</div>
-        <div className="mt-0.5 font-mono text-[9px] tracking-wide text-white/35">Obsidian · Hazard Yellow · Cyan · Amethyst</div>
+        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">FR!sky — GOOD PUP. BAD BOI.</div>
+        <div className="mt-0.5 font-mono text-[9px] tracking-wide text-white/35">Obsidian · Hazard Yellow · Cyan · Amethyst · FR!sky</div>
       </div>
       <nav aria-label="Principal" className="px-2 py-3 text-[13px]">
         <a className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-white/50 hover:bg-white/5 hover:text-white">
@@ -147,7 +256,7 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
         </a>
       </nav>
       <div className="px-3 pb-2 pt-4">
-        <div className="font-mono text-[10px] tracking-[0.2em] text-white/30 uppercase">Fijados</div>
+        <div className="font-mono text-[10px] tracking-[0.2em] text-white/30 uppercase">{t.pinned}</div>
         <div className="mt-2 grid gap-1 text-[13px]">
           <a className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-white/80 hover:bg-white/5">
             <span className="text-white/25">⧉</span> FOLIOS
@@ -162,7 +271,7 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
       </div>
       <div className="px-3 pb-2 pt-4">
         <div className="flex items-center justify-between">
-          <div className="font-mono text-[10px] tracking-[0.2em] text-white/30 uppercase">Chats y tareas</div>
+          <div className="font-mono text-[10px] tracking-[0.2em] text-white/30 uppercase">{t.chats}</div>
           <div className="flex gap-1 text-white/30">
             <span className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/5">⌕</span>
             <span className="grid h-6 w-6 place-items-center rounded-md hover:bg-white/5">≡</span>
@@ -179,10 +288,10 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
             "Zeabur deployment troubleshooting",
             "Inforge stack integration",
             "Design system sync",
-          ].map((t) => (
-            <a key={t} className="flex items-center gap-2 truncate rounded-lg px-2 py-0.5 hover:bg-white/5 hover:text-white/70">
+          ].map((chatTitle) => (
+            <a key={chatTitle} className="flex items-center gap-2 truncate rounded-lg px-2 py-0.5 hover:bg-white/5 hover:text-white/70">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full border border-white/20" aria-hidden />{" "}
-              <span className="truncate">{t}</span>
+              <span className="truncate">{chatTitle}</span>
             </a>
           ))}
           <a className="mt-1 flex items-center gap-2 rounded-lg bg-[#FFD100]/10 px-2 py-1 font-mono text-[11px] tracking-wide text-[#FFD100]">
@@ -192,7 +301,7 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
       </div>
       <div className="border-t border-white/10 p-2">
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-2">
-          <div className="font-mono text-[9px] tracking-[0.18em] text-white/30 uppercase">Apoya — Keep it pup</div>
+          <div className="font-mono text-[9px] tracking-[0.18em] text-white/30 uppercase">{t.supportHead}</div>
           <div className="mt-1.5">
             <SupportRailCompact />
           </div>
@@ -203,7 +312,7 @@ function Sidebar({ onOpenByok, hasKey }: { onOpenByok: () => void; hasKey: boole
           <span className="grid h-7 w-7 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[10px] font-[900] text-[#121212]">FP</span>
           <div className="min-w-0">
             <div className="font-display text-[12px] font-[800] leading-none tracking-[-0.02em] text-white">Frisky · Pro</div>
-            <div className={`font-mono text-[10px] tracking-wide uppercase leading-none ${hasKey ? "text-[#00E5FF]" : "text-white/40"}`}>{hasKey ? "BYOK conectado" : "BYOK sin configurar"}</div>
+            <div className={`font-mono text-[10px] tracking-wide uppercase leading-none ${hasKey ? "text-[#00E5FF]" : "text-white/40"}`}>{hasKey ? t.byokOn : t.byokOff}</div>
           </div>
           <button onClick={onOpenByok} className="ml-auto grid h-7 w-7 place-items-center rounded-lg border-2 border-white bg-white text-[#121212] font-bold">
             ↓
@@ -330,18 +439,42 @@ export default function Page() {
   const { keys, save, hasKey } = useByok();
   const [byokOpen, setByokOpen] = useState(false);
   const [tab, setTab] = useState<"disenos" | "sistemas">("disenos");
+  const [lang, setLang] = useState<"es" | "en">(() => {
+    // Render-time read: query param wins instantly (no effect delay, no screenshot race).
+    try {
+      const q = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("lang");
+      if (q === "es" || q === "en") return q;
+      const saved = localStorage.getItem("open-claude-design:lang");
+      if (saved === "es" || saved === "en") return saved;
+    } catch {}
+    return "es";
+  });
+  // Mount-time language: ?lang= wins (shared links), then saved preference, then browser.
+  // After mount, ONLY the toggle changes lang (optimistic setLang + replaceState).
+  // No polling — a poll would clobber the user's click with a stale read.
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("lang");
+      if (q === "es" || q === "en") { setLang(q); localStorage.setItem("open-claude-design:lang", q); return; }
+      const saved = localStorage.getItem("open-claude-design:lang");
+      if (saved === "es" || saved === "en") { setLang(saved); return; }
+      if (navigator.language?.startsWith("en")) setLang("en");
+    } catch {}
+  }, []);
+  const t = COPY[lang];
   return (
     <div className="min-h-screen p-0 sm:p-3">
       <div className="mx-auto flex min-h-screen w-full max-w-[1680px] overflow-hidden rounded-none border-white/10 bg-black/40 backdrop-blur-sm sm:min-h-[calc(100vh-24px)] sm:rounded-[22px] sm:border-2">
-        <Sidebar onOpenByok={() => setByokOpen(true)} hasKey={hasKey} />
+        <Sidebar onOpenByok={() => setByokOpen(true)} hasKey={hasKey} lang={lang} />
         <main className="min-w-0 flex-1 bg-[#0B0B0F]/70">
           <div className="flex h-[52px] items-center gap-2 border-b border-white/10 px-4 sm:hidden">
-            <span className="font-display text-sm font-[800] tracking-[-0.02em] text-white">PUPFR!SKY · Diseño</span>
+            <span className="font-display text-sm font-[800] tracking-[-0.02em] text-white">FR!sky · {lang === "es" ? "Diseño" : "Design"}</span>
+            <span className="ml-auto"><LangToggle lang={lang} setLang={setLang} /></span>
             <button
               onClick={() => setByokOpen(true)}
-              className={`ml-auto rounded-full border-2 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wide ${hasKey ? "border-white bg-[#FFD100] text-[#121212]" : "border-white/20 bg-white/5 text-white/60"}`}
+              className={`rounded-full border-2 px-3 py-1 font-mono text-xs font-bold uppercase tracking-wide ${hasKey ? "border-white bg-[#FFD100] text-[#121212]" : "border-white/20 bg-white/5 text-white/60"}`}
             >
-              {hasKey ? "BYOK ✓" : "BYOK"}
+              {hasKey ? t.byokPillOn : t.byokPill}
             </button>
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-7">
@@ -349,23 +482,26 @@ export default function Page() {
             <div className="reveal flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
               <div>
                 <div className="reveal font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
-                  PUPFR!SKY × Claude Design · Netlify OSS · 01 — Opening
+                  {t.eyebrow}
                 </div>
-                <h1 className="reveal title-glow font-display text-[42px] font-[800] leading-[0.95] tracking-[-0.045em] text-white sm:text-[58px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
-                  Diseño
+                <h1 data-lang={lang} className="reveal title-glow font-display text-[42px] font-[800] leading-[0.95] tracking-[-0.045em] text-white sm:text-[58px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
+                  {t.title}
                 </h1>
                 <p className="reveal mt-2 max-w-xl text-[13px] leading-5 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
-                  Claude&apos;s gallery, in PUPFR!SKY&apos;s Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —{" "}
-                  <span className="text-white">tweaked, not cloned.</span>
+                  {t.ledeA}{" "}
+                  <span className="text-white">{t.ledeB}</span>
                 </p>
               </div>
-              <button
-                onClick={() => setByokOpen(true)}
-                className="hidden items-center gap-2 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212] hover:bg-[#FFE04D] sm:inline-flex"
-              >
+              <div className="hidden shrink-0 items-center gap-2 sm:flex">
+                <LangToggle lang={lang} setLang={setLang} />
+                <button
+                  onClick={() => setByokOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212] hover:bg-[#FFE04D]"
+                >
                 <span className={`h-2 w-2 rounded-full border border-[#121212] ${hasKey ? "bg-[#00E5FF]" : "bg-white/40"}`} aria-hidden />{" "}
-                {hasKey ? "BYOK activo" : "Añadir API key"}
-              </button>
+                {hasKey ? t.byokBtnOn : t.byokBtn}
+                </button>
+              </div>
             </div>
             <div className="reveal mt-6 flex items-center justify-between gap-3" style={{ ["--reveal-delay" as string]: "300ms" }}>
               <div className="flex items-center gap-1 rounded-full border-2 border-white bg-[#191424] p-1">
@@ -373,13 +509,13 @@ export default function Page() {
                   onClick={() => setTab("disenos")}
                   className={`rounded-full px-3 py-1.5 font-mono text-[13px] font-bold ${tab === "disenos" ? "bg-[#FFD100] text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
-                  Diseños
+                  {t.tabs[0]}
                 </button>
                 <button
                   onClick={() => setTab("sistemas")}
                   className={`rounded-full px-3 py-1.5 font-mono text-[13px] ${tab === "sistemas" ? "bg-white text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
-                  Sistemas de diseño <span className="opacity-60" aria-hidden>
+                  {t.tabs[1]} <span className="opacity-60" aria-hidden>
                     →
                   </span>
                 </button>
@@ -392,15 +528,15 @@ export default function Page() {
             <div className="reveal mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-5" style={{ ["--reveal-delay" as string]: "380ms" }}>
               <div className="flex items-center gap-2 font-display text-[13px] font-[800] tracking-[-0.02em] text-white">
                 <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
-                Claude Design ahora está aquí — con tweak PUPFR!SKY
+                {t.bannerTitle}
               </div>
-              <p className="mt-1 text-[13px] leading-5 text-[#A49CB4]">Claude&apos;s Presentaciones + Diseño como artefactos. Este clon respeta el layout, viste Obsidian + neones y el die-cut de pupfrisky.com.</p>
+              <p className="mt-1 text-[13px] leading-5 text-[#A49CB4]">{t.bannerBody}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link href="/admin" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#00E5FF] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
-                  Admin · frk_live_ keys
+                  {t.adminPill}
                 </Link>
-                <a href="https://pupfrisky.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
-                  pupfrisky.com <span aria-hidden>↗</span>
+                <a href="https://friskydev.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#FFD100] px-3 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
+                  friskydev.com <span aria-hidden>↗</span>
                 </a>
                 <a href="https://github.com/friskypup/open-claude-design" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-white px-3 py-1.5 font-mono text-[11px] font-bold text-[#121212]">
                   Ver repo <span aria-hidden>↗</span>
@@ -408,23 +544,38 @@ export default function Page() {
               </div>
               {!hasKey ? (
                 <div className="mt-3 rounded-xl border border-[#FFD100]/30 bg-[#FFD100]/10 px-3 py-2 font-mono text-[11px] leading-5 tracking-wide text-[#FFD100]/90">
-                  Sin API key: modo demo.{" "}
+                  {t.noKeyA}{" "}
                   <button onClick={() => setByokOpen(true)} className="underline decoration-[#FFD100]/40 underline-offset-2">
-                    Añadir API key
+                    {t.noKeyBtn}
                   </button>{" "}
-                  y pega tu <code>ANTHROPIC_API_KEY</code> u <code>OPENROUTER_API_KEY</code> para artefactos reales. Todas las <code>tools/call</code> requieren owner JWT o{" "}
-                  <code>frk_live_…</code> (como Mobbin).
+                  {t.noKeyB} <code>ANTHROPIC_API_KEY</code> {t.noKeyC} <code>OPENROUTER_API_KEY</code> {t.noKeyD} <code>tools/call</code> {t.noKeyE}{" "}
+                  <code>frk_live_…</code> {t.noKeyF}
                 </div>
               ) : (
                 <div className="mt-3 rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 font-mono text-[11px] tracking-wide text-emerald-200">
-                  BYOK ✓ — keys en <code>localStorage</code>. Prueba un prompt en <span className="font-bold">Design in codebase</span> arriba.
+                  {t.hasKey} <code>localStorage</code>.{t.hasKeyB} <span className="font-bold">Design in codebase</span> {t.hasKeyC}
                 </div>
               )}
+            </div>
+            {/* ticker: the studio signal, always moving — pure FR!sky voice */}
+            <div className="reveal mt-6 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] py-2" style={{ ["--reveal-delay" as string]: "430ms" }} aria-hidden>
+              <div className="ticker-track flex w-max items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] text-white/35 uppercase">
+                {Array.from({ length: 2 }).map((_, dup) => (
+                  <span key={dup} className="flex items-center gap-8">
+                    <span>FR!sky × Claude Design</span><span className="text-[#FFD100]">●</span>
+                    <span>BYOK — tu key, tus costos</span><span className="text-[#00E5FF]">●</span>
+                    <span>Admin · frk_live_ keys</span><span className="text-[#9D00FF]">●</span>
+                    <span>Mobbin platform: ios|web fixed</span><span className="text-[#FFD100]">●</span>
+                    <span>Netlify 1-click · Sin backend</span><span className="text-[#00E5FF]">●</span>
+                    <span>1440px proof — breathtaking or it doesn&apos;t ship</span><span className="text-[#9D00FF]">●</span>
+                  </span>
+                ))}
+              </div>
             </div>
             {/* act 02: the four doors rise one after another */}
             <div className="reveal mt-8" style={{ ["--reveal-delay" as string]: "480ms" }}>
               <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
-                Make something new <span className="ml-2 text-[#FFD100]/60">· act 02 — four doors</span>
+                {t.make} <span className="ml-2 text-[#FFD100]/60">{t.act2}</span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                 <MakeCard title="Slides" beta variant="yellow" />
@@ -433,14 +584,14 @@ export default function Page() {
                 <MakeCard title="Design System" variant="coal" />
               </div>
               <p className="mt-2 font-mono text-[10px] tracking-wide text-white/30">
-                Figma Tokens → Style Dictionary → <code className="text-white/50">src/app/globals.css</code> · react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.
+                {t.pipeline} <code className="text-white/50">src/app/globals.css</code>{t.pipelineB}
               </p>
             </div>
             {/* act 03: the gallery wall settles in */}
             <div className="reveal mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" style={{ ["--reveal-delay" as string]: "620ms" }}>
-              <ProjectCard title="Nocturne" subtitle="Visto hace 52 min" />
-              <ProjectCard title="Code Pup" subtitle="Editado anteayer" />
-              <ProjectCard title="Spec files shared" subtitle="Visto hace 19 h" />
+              <ProjectCard title="Nocturne" subtitle={lang === "es" ? "Visto hace 52 min" : "Viewed 52 min ago"} />
+              <ProjectCard title="Code Pup" subtitle={lang === "es" ? "Editado anteayer" : "Edited the day before"} />
+              <ProjectCard title="Spec files shared" subtitle={lang === "es" ? "Visto hace 19 h" : "Viewed 19 h ago"} />
               <div className="sticker-hover overflow-hidden rounded-[18px] border-white bg-[#191424]">
                 <div className="relative aspect-[16/10] bg-black p-4">
                   <div className="absolute inset-0 grid place-items-center opacity-60" aria-hidden>
@@ -485,15 +636,15 @@ export default function Page() {
             </div>
             {/* act 04: the money shot */}
             <div className="reveal mt-10" style={{ ["--reveal-delay" as string]: "740ms" }}>
-              <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">Act 04 — el dinero, no el por ciento</div>
-              <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">Por qué usar este clon en vez de claude.ai</h2>
-              <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">Mismo diseño Claude, pero tuyo. Con Mobbin Pro como spec y tu propia key — sin suscripción, sin lock-in.</p>
+              <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">{lang === "es" ? "Act 04 — el dinero, no el por ciento" : "Act 04 — the money, not the percent"}</div>
+              <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">{t.benefitsHead}</h2>
+              <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">{t.benefitsSub}</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {[
                   { k: "BYOK · Tu key, tus costos", d: "Pega tu ANTHROPIC / OPENAI / OPENROUTER key. Solo localStorage, nunca servidor. Por token, no $20/mes.", icon: "◈", c: "#FFD100" },
                   { k: "Privacidad total", d: "Zero storage. Netlify Function es dumb proxy. Tus prompts no se loguean, no hay DB.", icon: "⛨", c: "#00E5FF" },
                   { k: "Cualquier modelo, mismo diseño", d: "Claude Design sobre GPT-5 o Gemini vía OpenRouter. Cambia de modelo, no de UI.", icon: "⬢", c: "#9D00FF" },
-                  { k: "Open source · Tuyo", d: "MIT. Forkea, rebrandéa, hostea en Netlify/Vercel. Tweak PUPFR!SKY incluido.", icon: "〈〉", c: "#FFD100" },
+                  { k: "Open source · Tuyo", d: "MIT. Forkea, rebrandéa, hostea en Netlify/Vercel. Tweak FR!sky incluido.", icon: "〈〉", c: "#FFD100" },
                   { k: "De Mobbin a código real", d: "Mobbin Pro es solo referencia. Esto lo convierte en repo productivo: gallery + canvas.", icon: "◐", c: "#00E5FF" },
                   { k: "Netlify 1-click · Sin backend", d: "netlify.toml + @netlify/plugin-nextjs. Deploy 60s, sin envs, sin server.", icon: "⬡", c: "#9D00FF" },
                 ].map((b) => (
@@ -521,9 +672,9 @@ export default function Page() {
               </div>
             </div>
             <div className="mt-8 rounded-xl border-2 border-white bg-[#191424] px-4 py-4 shadow-[0_8px_0_rgba(0,0,0,.4)]">
-              <div className="font-mono text-[11px] tracking-[0.2em] text-[#FFD100] uppercase">Open source · Netlify-ready · PUPFR!SKY tweak · Zeabur `mcp.zeabur.com` canonical</div>
+              <div className="font-mono text-[11px] tracking-[0.2em] text-[#FFD100] uppercase">Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical</div>
               <p className="mt-1 max-w-3xl text-[12px] leading-5 text-white/50">
-                Clon del tab <span className="font-bold text-white">Diseño</span> de claude.ai. Layout de Claude, piel de pupfrisky.com: Obsidian{" "}
+                Clon del tab <span className="font-bold text-white">Diseño</span> de claude.ai. Layout de Claude, piel FR!sky: Obsidian{" "}
                 <code className="rounded bg-white/10 px-1 font-mono text-white">#121212</code>, Hazard Yellow{" "}
                 <code className="rounded bg-white/10 px-1 font-mono text-white">#FFD100</code> · Neon. BYOK{" "}
                 <code className="rounded bg-white/10 px-1 font-mono text-white">localStorage → x-api-key → netlify/functions/chat.ts</code> (no storage).{" "}
@@ -540,7 +691,7 @@ export default function Page() {
                   Probar BYOK
                 </button>
                 <Link href="/admin" className="rounded-full border-2 border-white bg-[#00E5FF] px-4 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212]">
-                  Admin · frk_live_ keys
+                  {t.adminPill}
                 </Link>
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 font-mono text-xs tracking-wide text-white/40">Next.js 16 · Tailwind 4 · 1440px proof</span>
               </div>
@@ -551,7 +702,7 @@ export default function Page() {
           </div>
         </main>
       </div>
-      <ByokModal open={byokOpen} onClose={() => setByokOpen(false)} keys={keys} onSave={save} />
+      <ByokModal open={byokOpen} onClose={() => setByokOpen(false)} keys={keys} onSave={save} t={t} />
     </div>
   );
 }

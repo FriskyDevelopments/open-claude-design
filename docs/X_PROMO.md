@@ -14,7 +14,7 @@ Next 16 + Tailwind 4 + shadcn · Netlify 1-click · Zeabur MCP as canonical `mcp
 
 BYOK: your `ANTHROPIC_API_KEY` stays in `localStorage`, never on server. Any model (GPT-5, Gemini via OpenRouter), same Claude design.
 
-PUPFR!SKY skin (#121212 / #FFD100 / #00E5FF / #9D00FF) · die-cut stickers · breathtaking, not default.
+FR!sky skin (#121212 / #FFD100 / #00E5FF / #9D00FF) · die-cut stickers · breathtaking, not default.
 
 MIT. Help me earn Netlify Open Source perks → star + deploy 👇
 
@@ -47,7 +47,7 @@ Want in? `★ star` the repo → Deploy to Netlify button → try BYOK → mint 
 
 Want your skin? Fork → re-token the 4 vars and ship your agency.
 
-#open-source #netlify #tailwind #nextjs #mcp #awwwards #claude #pupfrisky #uiverse #figma #zeabur
+#open-source #netlify #tailwind #nextjs #mcp #awwwards #claude #friskydev #uiverse #figma #zeabur
 
 ## Alt — short bump (post-cutover)
 

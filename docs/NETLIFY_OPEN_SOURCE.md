@@ -21,8 +21,8 @@ Builds: `npm run build` → `.next` (static) | Auth: Supabase owner `5cczgpz…@
 
 ## Cross-promo for X / Frisky footprint
 
-Open Claude Design plugs the studio story: `pupfrisky.com` skin (#121212/#FFD100/#00E5FF/#9D00FF), Figma Tokens → Style Dictionary, Magic Patterns, Mobbin Pro (reference), Uiverse Galaxy, react-bits. Mention all in thread: gallery screenshot 1440px + `/admin` screenshot + login screen + `npm run build` green badge. That's the "jewels" hook that wins OSS + Awwwards eyes, not just code.
+Open Claude Design plugs the studio story: `friskydev.com` skin — FR!sky (#121212/#FFD100/#00E5FF/#9D00FF), Figma Tokens → Style Dictionary, Magic Patterns, Mobbin Pro (reference), Uiverse Galaxy, react-bits. Mention all in thread: gallery screenshot 1440px + `/admin` screenshot + login screen + `npm run build` green badge. That's the "jewels" hook that wins OSS + Awwwards eyes, not just code.
 
 ## Legal reminder before promo
 
-Don't ship Mobbin PNGs. Shots are composed clean (same as in `README Legal`) — rebuild, no redistribution. Link `https://pupfrisky.com` and `https://mcp.friskydev.com` / `mcp.zeabur.com`.
+Don't ship Mobbin PNGs. Shots are composed clean (same as in `README Legal`) — rebuild, no redistribution. Link `https://friskydev.com` and `https://mcp.friskydev.com` / `mcp.zeabur.com`.

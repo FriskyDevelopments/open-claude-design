@@ -16,7 +16,7 @@ type ApiKeyRecord = {
 
 const ADMIN_AUTH_KEY = "open-claude-design:owner-auth";
 const ADMIN_KEYS_KEY = "open-claude-design:admin-keys";
-const OWNER_PASSWORD = "pupfrisky-owner";
+const OWNER_PASSWORD = "frisky-owner";
 
 const TOOL_SCOPES = [
   { id: "frisky.mcp", label: "frisky.mcp — all tools" },
@@ -65,7 +65,7 @@ export default function AdminPage() {
       setAuthed(true);
       setAuthError("");
     } else {
-      setAuthError("Wrong owner password. Hint for MVP: pupfrisky-owner");
+      setAuthError("Wrong owner password. Hint for MVP: frisky-owner");
     }
   };
 
@@ -116,7 +116,7 @@ export default function AdminPage() {
               </div>
             </div>
             <p className="mt-3 text-[13px] leading-5 text-[#A49CB4]">
-              Owner / admin only. Same trust gate as the MCP gateway. MVP password is <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[11px] text-[#121212]">pupfrisky-owner</code>
+              Owner / admin only. Same trust gate as the MCP gateway. MVP password is <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[11px] text-[#121212]">frisky-owner</code>
             </p>
             <div className="mt-4 grid grid-cols-3 gap-2">
               <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
