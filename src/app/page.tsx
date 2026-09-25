@@ -24,6 +24,24 @@ function useReveal<T extends HTMLElement>() {
   }, []);
   return ref;
 }
+// Scroll position (rAF-throttled) driving --scroll-y for parallax layers.
+function useScrollY() {
+  useEffect(() => {
+    let raf = 0;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      raf = requestAnimationFrame(() => {
+        try { document.documentElement.style.setProperty("--scroll-y", `${window.scrollY}px`); } catch {}
+        ticking = false;
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, []);
+}
 function RevealSection({ className = "", delay, children, cascade = false }: { className?: string; delay?: string; children: React.ReactNode; cascade?: boolean }) {
   const ref = useReveal<HTMLDivElement>();
   const style = delay ? ({ ["--reveal-delay" as string]: delay } as React.CSSProperties) : undefined;
@@ -468,6 +486,7 @@ export default function Page() {
   const { keys, save, hasKey } = useByok();
   const [byokOpen, setByokOpen] = useState(false);
   const [tab, setTab] = useState<"disenos" | "sistemas">("disenos");
+  useScrollY();
   // English first: default "en" unless the visitor explicitly chose Spanish
   // (?lang=es wins, then saved preference — a saved "es" is always honored).
   const [lang, setLang] = useState<"es" | "en">(() => {
@@ -510,9 +529,10 @@ export default function Page() {
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-7">
             {/* opening shot: eyebrow tc → title bloom → lede rises · FR!sky voice, Framer-grade */}
-            <div className="reveal flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
+            <div className="reveal relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
+              <div className="embers parallax-fast" aria-hidden><i /><i /><i /><i /><i /><i /><i /><i /></div>
               <div>
-                <div className="reveal flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
+                <div className="parallax-slow reveal flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
                   <span className="breathe inline-block h-1.5 w-1.5 rounded-full bg-[#00E5FF]" aria-hidden />
                   <span className="neon neon-yellow neon-glow" aria-hidden={false}>FR!sky</span>
                   <span className="text-white/50">× Claude Design · Netlify OSS · 01 — Opening</span>
@@ -522,17 +542,10 @@ export default function Page() {
                   <span className="relative">{t.title}</span>
                   <span className="neon neon-cyan neon-glow relative text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "1.4s" }} aria-hidden>.</span>
                 </h1>
-                <p className="reveal mt-3 max-w-xl text-[14px] leading-6 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
+                <p className="reveal mt-2 max-w-xl text-[13px] leading-5 text-[#A49CB4]" style={{ ["--reveal-delay" as string]: "220ms" }}>
                   {t.ledeA}{" "}
                   <span className="font-semibold text-white">{t.ledeB}</span>
                 </p>
-                <div className="reveal mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] tracking-[0.14em] uppercase" style={{ ["--reveal-delay" as string]: "280ms" }}>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">MIT · fork it</span>
-                  <span className="h-3 w-px bg-white/10" aria-hidden />
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-white/60">BYOK · $3/1M</span>
-                  <span className="h-3 w-px bg-white/10" aria-hidden />
-                  <span className="neon neon-yellow neon-soft rounded-full border-[#FFD100]/30 bg-[#FFD100]/10 px-2.5 py-1 text-[#FFD100]">frk_live_ gate</span>
-                </div>
               </div>
               <div className="hidden shrink-0 items-center gap-2 sm:flex">
                 <LangToggle lang={lang} setLang={setLang} />
@@ -549,13 +562,15 @@ export default function Page() {
               <div className="flex items-center gap-1 rounded-full border-2 border-white bg-[#191424] p-1">
                 <button
                   onClick={() => setTab("disenos")}
-                  className={`press rounded-full px-3 py-1.5 font-mono text-[13px] font-bold ${tab === "disenos" ? "bg-[#FFD100] text-[#121212]" : "text-white/50 hover:text-white"}`}
+                  data-active={tab === "disenos"}
+                  className={`press focus-tab rounded-full px-3 py-1.5 font-mono text-[13px] font-bold ${tab === "disenos" ? "bg-[#FFD100] text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
                   {t.tabs[0]}
                 </button>
                 <button
                   onClick={() => setTab("sistemas")}
-                  className={`press rounded-full px-3 py-1.5 font-mono text-[13px] ${tab === "sistemas" ? "bg-white text-[#121212]" : "text-white/50 hover:text-white"}`}
+                  data-active={tab === "sistemas"}
+                  className={`press focus-tab rounded-full px-3 py-1.5 font-mono text-[13px] ${tab === "sistemas" ? "bg-white text-[#121212]" : "text-white/50 hover:text-white"}`}
                 >
                   {t.tabs[1]} <span className="opacity-60" aria-hidden>
                     →
@@ -567,15 +582,12 @@ export default function Page() {
                 <button className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-white/5 hover:bg-white/10">≡</button>
               </div>
             </div>
-            <div className="reveal card-sheen mt-6 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:p-6" style={{ ["--reveal-delay" as string]: "380ms" }}>
-              <div className="flex items-center gap-2">
-                <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
+            <div className="reveal card-sheen mt-5 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:px-5 sm:py-4" style={{ ["--reveal-delay" as string]: "380ms" }}>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
                 <span className="neon neon-cyan neon-glow font-mono text-[10px] tracking-[0.24em] text-[#00E5FF] uppercase">Live · Netlify OSS</span>
+                <span className="font-display text-[17px] font-[800] tracking-[-0.02em] text-white">{t.bannerTitle}</span>
               </div>
-              <div className="mt-2 font-display text-[22px] font-[800] leading-tight tracking-[-0.03em] text-white sm:text-[26px]">
-                {t.bannerTitle}
-              </div>
-              <p className="mt-1.5 max-w-2xl text-[13px] leading-5 text-[#A49CB4]">{t.bannerBody}</p>
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <Link href="/admin" className="press inline-flex items-center gap-1.5 rounded-full border-2 border-white bg-[#00E5FF] px-4 py-2 font-mono text-[11px] font-[800] tracking-wide text-[#121212] shadow-[0_0_28px_rgba(0,229,255,0.35)]">
                   {t.adminPill} <span aria-hidden>→</span>
@@ -588,20 +600,35 @@ export default function Page() {
                 </a>
               </div>
               {!hasKey ? (
-                <div className="mt-3 rounded-xl border border-[#FFD100]/30 bg-[#FFD100]/10 px-3 py-2 font-mono text-[11px] leading-5 tracking-wide text-[#FFD100]/90">
+                <p className="mt-2.5 font-mono text-[10px] tracking-wide text-[#FFD100]/60">
                   {t.noKeyA}{" "}
-                  <button onClick={() => setByokOpen(true)} className="underline decoration-[#FFD100]/40 underline-offset-2">
+                  <button onClick={() => setByokOpen(true)} className="font-bold text-[#FFD100] underline decoration-[#FFD100]/40 underline-offset-2">
                     {t.noKeyBtn}
-                  </button>{" "}
-                  {t.noKeyB} <code>ANTHROPIC_API_KEY</code> {t.noKeyC} <code>OPENROUTER_API_KEY</code> {t.noKeyD} <code>tools/call</code> {t.noKeyE}{" "}
-                  <code>frk_live_…</code> {t.noKeyF}
-                </div>
+                  </button>
+                </p>
               ) : (
                 <div className="mt-3 rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 font-mono text-[11px] tracking-wide text-emerald-200">
                   {t.hasKey} <code>localStorage</code>.{t.hasKeyB} <span className="font-bold">Design in codebase</span> {t.hasKeyC}
                 </div>
               )}
             </div>
+            <div className="act-rule" aria-hidden><i /></div>
+            {/* act 02: the four doors rise one after another */}
+            <div className="reveal mt-8" style={{ ["--reveal-delay" as string]: "480ms" }}>
+              <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
+                {t.make} <span className="ml-2 text-[#FFD100]/60">{t.act2}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+                <MakeCard title="Slides" beta variant="yellow" />
+                <MakeCard title="Design" beta variant="amethyst" />
+                <MakeCard title="Design in codebase" variant="cyan" />
+                <MakeCard title="Design System" variant="coal" />
+              </div>
+              <p className="mt-2 font-mono text-[10px] tracking-wide text-white/30">
+                {t.pipeline} <code className="text-white/50">src/app/globals.css</code>{t.pipelineB}
+              </p>
+            </div>
+
             {/* ticker: the studio signal, always moving — pure FR!sky voice */}
             <div className="reveal mt-6 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] py-2" style={{ ["--reveal-delay" as string]: "430ms" }} aria-hidden>
               <div className="ticker-track flex w-max items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] text-white/35 uppercase">
@@ -617,22 +644,7 @@ export default function Page() {
                 ))}
               </div>
             </div>
-            <div className="act-rule" aria-hidden><i /></div>
-            {/* act 02: the four doors rise one after another */}
-            <RevealSection className="mt-8" cascade>
-              <div className="font-mono text-[11px] tracking-[0.24em] text-white/35 uppercase">
-                {t.make} <span className="ml-2 text-[#FFD100]/60">{t.act2}</span>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-                <MakeCard title="Slides" beta variant="yellow" />
-                <MakeCard title="Design" beta variant="amethyst" />
-                <MakeCard title="Design in codebase" variant="cyan" />
-                <MakeCard title="Design System" variant="coal" />
-              </div>
-              <p className="mt-2 font-mono text-[10px] tracking-wide text-white/30">
-                {t.pipeline} <code className="text-white/50">src/app/globals.css</code>{t.pipelineB}
-              </p>
-            </RevealSection>
+
             {/* act 03: the gallery wall settles in */}
             <div className="act-rule" aria-hidden><i /></div>
             <RevealSection className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" cascade>
@@ -683,7 +695,7 @@ export default function Page() {
             </RevealSection>
             <div className="act-rule" aria-hidden><i /></div>
             {/* act 04: the money shot */}
-            <RevealSection className="mt-10">
+            <RevealSection className="sweep mt-10 rounded-[18px] border border-white/5 px-1 py-1">
               <div className="font-mono text-[10px] tracking-[0.24em] text-white/30 uppercase">{lang === "es" ? "Act 04 — " : "Act 04 — "}<span className="neon neon-amethyst neon-glow text-[#9D00FF]">{lang === "es" ? "el dinero, no el por ciento" : "the money, not the percent"}</span></div>
               <h2 className="title-glow mt-1 font-display text-[15px] font-[800] tracking-wide text-white">{t.benefitsHead}</h2>
               <p className="mt-1 max-w-2xl font-mono text-[11px] leading-5 tracking-wide text-white/40 uppercase">{t.benefitsSub}</p>

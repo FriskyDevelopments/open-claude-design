@@ -293,6 +293,91 @@ body::after {
 @keyframes ticker-scroll { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
 
+/* ── escalation: parallax, sweep, focus-pull, embers ──── */
+
+/* hero parallax stage: layers drift at different rates on scroll.
+   wired by JS translating --scroll-y into per-layer offsets. */
+.parallax-slow { transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.06), 0); will-change: transform; }
+.parallax-fast { transform: translate3d(0, calc(var(--scroll-y, 0px) * -0.04), 0); will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .parallax-slow, .parallax-fast { transform: none; }
+}
+
+/* focus-pull tabs: the active tab snaps into focus, idle tabs sit
+   slightly soft — like a lens racking between subjects. */
+.focus-tab {
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    filter 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.focus-tab[data-active="false"] {
+  filter: blur(0.6px) brightness(0.82);
+}
+.focus-tab[data-active="true"] {
+  filter: blur(0) brightness(1.06);
+}
+
+/* light sweep: a wide anamorphic streak crosses the banner once
+   when it scrolls into view — the .is-in trigger fires it. */
+.sweep { position: relative; overflow: hidden; }
+.sweep::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: -30%;
+  width: 34%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 209, 0, 0.10) 35%, rgba(0, 229, 255, 0.10) 55%, transparent 75%);
+  transform: translateX(-120%) skewX(-12deg);
+}
+.is-in.sweep::before {
+  animation: sweep-pass 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+@keyframes sweep-pass {
+  to { transform: translateX(560%) skewX(-12deg); }
+}
+
+/* embers: a few slow sparks rise through the hero, canvas-free.
+   each <i> is one ember; nth-child sets lane, size, tempo. */
+.embers {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.embers > i {
+  position: absolute;
+  bottom: -8px;
+  border-radius: 999px;
+  background: #ffd100;
+  box-shadow: 0 0 8px rgba(255, 209, 0, 0.8);
+  opacity: 0;
+  animation: ember-rise linear infinite;
+}
+.embers > i:nth-child(3n) { background: #00e5ff; box-shadow: 0 0 8px rgba(0, 229, 255, 0.8); }
+.embers > i:nth-child(4n) { background: #9d00ff; box-shadow: 0 0 8px rgba(157, 0, 255, 0.8); }
+.embers > i:nth-child(1) { left: 8%; width: 3px; height: 3px; animation-duration: 9s; animation-delay: 0s; }
+.embers > i:nth-child(2) { left: 22%; width: 2px; height: 2px; animation-duration: 12s; animation-delay: 2.5s; }
+.embers > i:nth-child(3) { left: 38%; width: 4px; height: 4px; animation-duration: 10s; animation-delay: 5s; }
+.embers > i:nth-child(4) { left: 55%; width: 2px; height: 2px; animation-duration: 13s; animation-delay: 1.2s; }
+.embers > i:nth-child(5) { left: 68%; width: 3px; height: 3px; animation-duration: 9.5s; animation-delay: 3.8s; }
+.embers > i:nth-child(6) { left: 82%; width: 2px; height: 2px; animation-duration: 11s; animation-delay: 6.4s; }
+.embers > i:nth-child(7) { left: 91%; width: 3px; height: 3px; animation-duration: 12.5s; animation-delay: 0.8s; }
+.embers > i:nth-child(8) { left: 47%; width: 2px; height: 2px; animation-duration: 10.5s; animation-delay: 7.6s; }
+@keyframes ember-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  8% { opacity: 0.9; }
+  60% { opacity: 0.5; }
+  100% { transform: translateY(-340px) translateX(24px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-in.sweep::before { animation: none; }
+  .embers { display: none; }
+}
+
 /* ── flickering neon signage ──────────────────────────
    Faulty-tube flicker: mostly ON, with irregular dropouts.
    .neon-flicker = full drama (hero words). .neon-soft = gentle
