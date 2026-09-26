@@ -4,7 +4,7 @@
 
 ### The only open repo that clones `claude.ai` Diseño (Sep 2026) — breathtaking or it doesn't ship.
 
-[![MIT](https://img.shields.io/badge/license-MIT-121212.svg)](LICENSE) [![Netlify](https://img.shields.io/badge/Deploy%20to%20Netlify-1%E2%80%93click-00C7B7.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design) [![Netlify OSS](https://img.shields.io/badge/Netlify-Open%20Source%20Plan-00C7B7.svg)](open-source.netlify.com) [![Next 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org) [![Tailwind 4](https://img.shields.io/badge/tailwind-4-38bdf8.svg)](https://tailwindcss.com) [![Awwwards floor](https://img.shields.io/badge/awwwards-floor-FFD100.svg)](#awwwards)
+[![CI](https://github.com/FriskyDevelopments/open-claude-design/actions/workflows/ci.yml/badge.svg)](https://github.com/FriskyDevelopments/open-claude-design/actions/workflows/ci.yml) [![MIT](https://img.shields.io/badge/license-MIT-121212.svg)](LICENSE) [![Netlify](https://img.shields.io/badge/Deploy%20to%20Netlify-1%E2%80%93click-00C7B7.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design) [![Netlify OSS](https://img.shields.io/badge/Netlify-Open%20Source%20Plan-00C7B7.svg)](open-source.netlify.com) [![Next 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org) [![Tailwind 4](https://img.shields.io/badge/tailwind-4-38bdf8.svg)](https://tailwindcss.com) [![Awwwards floor](https://img.shields.io/badge/awwwards-floor-FFD100.svg)](#awwwards)
 
 **Clean rebuild from visual spec (Mobbin as reference) — no screenshots redistributed.** Inspired by `claude.ai`, not affiliated with Anthropic.
 
@@ -28,6 +28,33 @@
 
 > **vs claude.ai $20/mo:** pay what you consume. **vs Mobbin:** you get the repo + canvas, not just the PNG.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  user([Browser]) --> app[Next.js app<br/>src/app/page.tsx · gallery + artifact canvas]
+  app -->|BYOK key in localStorage| ls[(localStorage)]
+  app -->|POST /.netlify/functions/chat<br/>x-api-key · x-provider| fn[Netlify Function<br/>netlify/functions/chat.ts]
+  fn -->|stateless proxy, no DB, no logs| anth[Anthropic Messages API]
+  fn --> oai[OpenAI Chat Completions]
+  fn --> or[OpenRouter]
+  user --> admin[/admin · Admin Center<br/>src/app/admin/page.tsx/]
+  gh[GitHub main] -->|CI build gate| ci[GitHub Actions]
+  gh -->|build: npm run build<br/>@netlify/plugin-nextjs| netlify[Netlify]
+```
+
+## Project structure
+
+```text
+src/app/            # Next.js App Router: gallery/canvas (page.tsx), /admin, layout, styles
+src/components/     # SupportRail (support links source of truth)
+src/lib/            # cn() helper
+netlify/functions/  # chat.ts, the BYOK proxy to Anthropic / OpenAI / OpenRouter
+public/             # favicon, og-image, health.json
+docs/               # Netlify OSS checklist, X promo pack, Zeabur notes
+netlify.toml        # build + functions config (Node 20)
+```
+
 ## Deploy to Netlify (1 click) + promo as Open Source
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design)
@@ -44,7 +71,7 @@ npm run build # must stay green — awwwards floor: 1440px proof before merge
 
 ```bash
 npm run dev # http://localhost:3000 → Añadir API key (BYOK modal) → Design in codebase
-open http://localhost:3000/admin        # Admin Center — mint frk_live_ keys (frisky-gpt-mcp gate)
+open http://localhost:3000/admin        # Admin Center — mint frk_live_ keys (Frisky MCP gate)
 ```
 
 ## BYOK how it works
@@ -57,11 +84,11 @@ Works: `claude-sonnet-4-20250514` · `gpt-5` · any OpenRouter model (same desig
 
 ## Admin Center (all tools protected like Mobbin)
 
-`src/app/admin/page.tsx` → `/admin` — owner gate. MVP: `frisky-owner`; prod: **Supabase** owner/admin (`frisky-gpt-mcp/src/http-server.mjs:FRISKY_SUPABASE_OWNER_EMAILS`). Mint `frk_live_…` (**name · scopes · expiry 30d/90d/never · copy-once · revoke**) → `toolPolicy` + `audit_log`. Every `tools/call` without valid **owner JWT or `frk_live_`** → `401 Frisky Client Access login required`.
+`src/app/admin/page.tsx` → `/admin` — owner gate. MVP: `frisky-owner`; prod: **Supabase** owner/admin (owner allowlist on the Frisky MCP gateway). Mint `frk_live_…` (**name · scopes · expiry 30d/90d/never · copy-once · revoke**) → `toolPolicy` + `audit_log`. Every `tools/call` without valid **owner JWT or `frk_live_`** → `401 Frisky Client Access login required`.
 
 Scopes in UI: `frisky.mcp` (all tools) + `mobbin:read` + `memory:read` + `github:read` + `model:live`.
 
-Zebuar note: your `zat_…` is expired (`check`). After `zeabur auth login` → `docs/ZEABUR.md` → `mcp.friskydev.com` → `mcp.zeabur.com` canonical.
+Zeabur deployment notes: [docs/ZEABUR.md](docs/ZEABUR.md).
 
 ## Support — Whop & Donations
 
