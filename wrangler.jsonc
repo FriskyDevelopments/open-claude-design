@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "frisky-design",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./out",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*", "/mcp"]
+  },
+  "observability": { "enabled": true }
+  // Optional secrets (wrangler secret put): MCP_TOKEN, ANTHROPIC_API_KEY, OPENAI_API_KEY, OPENROUTER_API_KEY
+}
