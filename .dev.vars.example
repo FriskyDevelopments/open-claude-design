@@ -1,0 +1,6 @@
+# Optional. Only needed if you want the self-hosted /mcp endpoint to call a model with your key.
+# Model keys are ignored unless MCP_TOKEN is set, so your key is never exposed on an open endpoint.
+MCP_TOKEN=
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+OPENROUTER_API_KEY=

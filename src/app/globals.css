@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  --font-bricolage: "Bricolage Grotesque Variable", "Bricolage Grotesque";
+  --font-manrope: "Manrope Variable", "Manrope";
+  --font-jetbrains: "JetBrains Mono Variable", "JetBrains Mono";
+  --font-caveat: "Caveat";
+}
+
 /* ── FR!sky tweak on Claude Design ──────────────
    Base is Claude's gallery; palette is Pup's.
    Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst.
@@ -518,4 +525,16 @@ body::after {
 .neon-soft { animation-duration: 11s; opacity: 0.92; }
 @media (prefers-reduced-motion: reduce) {
   .neon, .neon-soft { animation: none; opacity: 1; }
+}
+
+/* Star pop-out: slide in from the corner, static for reduced motion */
+.star-popout {
+  animation: star-popout-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes star-popout-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .star-popout { animation: none; }
 }

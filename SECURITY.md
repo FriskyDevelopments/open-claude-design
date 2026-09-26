@@ -1,7 +1,16 @@
-# Security
+# Security policy
 
-Report privately: security@friskydev.com — we use `toolPolicy` + `audit_log` on the MCP gate and never store API keys plaintext (`frk_live_` = hashed `api_keys_v2`, BYOK stays in `localStorage`).
+## Reporting a vulnerability
 
-Do not open a public issue for secrets or auth bypass. We aim to triage within 48h.
+Please report vulnerabilities privately through GitHub: **[Report a vulnerability](https://github.com/FriskyDevelopments/open-claude-design/security/advisories/new)** (Security tab → Advisories). Do not open a public issue.
 
-Scope: `open-claude-design` gallery + `/admin`, `frisky-gpt-mcp` + `frisky-mcp-gateway` (`src/http-server.mjs` `authInfoFromRequest`, `FRISKY_SUPABASE_OWNER_EMAILS`, Composio Mobbin bridge `platform ios|web`).
+Include what you found, how to reproduce it and the impact you expect. I aim to acknowledge reports within 3 days and to ship a fix or mitigation for confirmed issues within 30 days, and I will credit you in the advisory unless you prefer otherwise.
+
+## Scope
+
+- The web app, `/api/chat` proxy, `/mcp` endpoint and the `mcp/` core in this repository.
+- Leaks of user model keys, cross-origin use of the proxy, sandbox escapes from rendered artifacts, and auth bypasses on a self-hosted `/mcp` with `MCP_TOKEN` set are all in scope.
+
+## Supported versions
+
+Only the latest release on `main` receives security fixes.

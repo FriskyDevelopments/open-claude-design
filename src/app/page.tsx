@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { SupportFooterStrip, SupportRailCompact } from "@/components/SupportRail";
+import { StarPopout } from "@/components/StarPopout";
+import { SiteFooter } from "@/components/SiteFooter";
+import { useByok, type ByokKeys } from "@/lib/byok";
+import { useLocalStorage, useQueryParam } from "@/lib/storage";
 
 // Viewport reveal: adds .is-in once when the section scrolls into view.
 function useReveal<T extends HTMLElement>() {
@@ -48,28 +52,11 @@ function RevealSection({ className = "", delay, children, cascade = false }: { c
   return <div ref={ref} className={`reveal-scroll${cascade ? " cascade" : ""}${className ? ` ${className}` : ""}`} style={style}>{children}</div>;
 }
 
-// ── BYOK (BYO API keys): client-only, stays in localStorage; sent as x-api-key header
-//        and proxied by netlify/functions/chat.ts (dumb forwarder) to Anthropic/OpenAI/OpenRouter.
-type ByokKeys = { anthropic: string; openai: string; openrouter: string };
-const STORAGE_KEY = "open-claude-design:keys";
-function useByok() {
-  const [keys, setKeys] = useState<ByokKeys>({ anthropic: "", openai: "", openrouter: "" });
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setKeys(JSON.parse(raw));
-    } catch {}
-  }, []);
-  const save = (n: ByokKeys) => {
-    setKeys(n);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(n));
-  };
-  return { keys, save, hasKey: Boolean(keys.anthropic || keys.openai || keys.openrouter) };
-}
+// BYOK: keys stay in this browser (localStorage) and are sent per request as x-api-key
+// to /api/chat, a stateless same-origin proxy to Anthropic / OpenAI / OpenRouter.
 
 function ByokModal({ open, onClose, keys, onSave, t }: { open: boolean; onClose: () => void; keys: ByokKeys; onSave: (k: ByokKeys) => void; t: (typeof COPY)[Lang] }) {
   const [draft, setDraft] = useState(keys);
-  useEffect(() => setDraft(keys), [keys]);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-md">
@@ -142,11 +129,7 @@ function LangToggle({ lang, setLang }: { lang: "es" | "en"; setLang: (l: "es" | 
         <button
           key={l}
           type="button"
-          onClick={() => {
-            try { localStorage.setItem("open-claude-design:lang", l); } catch {}
-            setLang(l);
-            try { window.history.replaceState(null, "", l === "es" ? "/" : "/?lang=en"); } catch {}
-          }}
+          onClick={() => setLang(l)}
           aria-pressed={lang === l}
           data-active={lang === l ? "1" : "0"}
           className={`rounded-full px-2 py-1 uppercase tracking-wide transition-colors ${lang === l ? "bg-[#FFD100] text-[#121212]" : "text-white/40 hover:text-white"}`}
@@ -158,18 +141,18 @@ function LangToggle({ lang, setLang }: { lang: "es" | "en"; setLang: (l: "es" | 
   );
 }
 
-// FR!sky × Claude — bilingual copy deck. Sidebar keeps product Spanish labels
+// FR!SKY Design — bilingual copy deck. Sidebar keeps product Spanish labels
 // (Nuevo/Proyectos/…) as the Claude-product voice; everything else toggles.
 const COPY = {
   es: {
-    eyebrow: "FR!sky × Claude Design · Netlify OSS · 01 — Opening",
+    eyebrow: "FR!SKY Design · open source · 01 — Opening",
     byokBtn: "Añadir API key", byokBtnOn: "BYOK activo", byokPill: "BYOK", byokPillOn: "BYOK ✓",
     title: "Diseño",
-    ledeA: "Claude's gallery, in FR!sky's Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —",
-    ledeB: "tweaked, not cloned.",
+    ledeA: "Un sistema open source de Claude Design en Obsidian FR!SKY + Hazard Yellow / Electric Cyan / Neon Amethyst —",
+    ledeB: "galería + canvas de artefactos, con tu propia key.",
     tabs: ["Diseños", "Sistemas de diseño"] as const,
-    bannerTitle: "Claude Design ahora está aquí — con tweak FR!sky",
-    bannerBody: "Claude's Presentaciones + Diseño como artefactos. Este clon respeta el layout, viste Obsidian + neones y el die-cut FR!sky.",
+    bannerTitle: "FR!SKY Design — un sistema open source de Claude Design",
+    bannerBody: "Claude's Presentaciones + Diseño como artefactos. Este clon respeta el layout, viste Obsidian + neones y el die-cut FR!SKY.",
     adminPill: "Admin · frk_live_ keys",
     noKeyA: "Sin API key: modo demo.",
     noKeyBtn: "Añadir API key",
@@ -190,25 +173,25 @@ const COPY = {
     byokOn: "BYOK conectado", byokOff: "BYOK sin configurar",
     benefitsHead: "Por qué usar este clon en vez de claude.ai",
     benefitsSub: "Mismo diseño Claude, pero tuyo. Con Mobbin Pro como spec y tu propia key — sin suscripción, sin lock-in.",
-    modalEyebrow: "FR!sky × Claude Design · BYOK",
+    modalEyebrow: "FR!SKY Design · BYOK",
     modalTitle: "Tu key, tus costos",
     modalBodyA: "BYOK real: tu key vive",
     modalBodyB: "solo en localStorage",
-    modalBodyC: "de tu navegador. Nunca toca nuestro servidor — el Netlify edge la reenvía con",
+    modalBodyC: "de tu navegador. Nunca toca nuestro servidor — el proxy /api/chat la reenvía con",
     modalTip: "Tip: pega al menos una. `Design in codebase` usa streaming directo.",
     cancel: "Cancelar", save: "Guardar keys",
-    openFooter: "Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical",
+    openFooter: "Open source · BYOK · Deploy to Cloudflare",
     cardTitles: ["Slides", "Design", "Design in codebase", "Design System"] as const,
   },
   en: {
-    eyebrow: "FR!sky × Claude Design · Netlify OSS · 01 — Opening",
+    eyebrow: "FR!SKY Design · open source · 01 — Opening",
     byokBtn: "Add API key", byokBtnOn: "BYOK active", byokPill: "BYOK", byokPillOn: "BYOK ✓",
     title: "Design",
-    ledeA: "Claude's gallery, in FR!sky's Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —",
-    ledeB: "tweaked, not cloned.",
+    ledeA: "An open source Claude Design system in FR!SKY's Obsidian + Hazard Yellow / Electric Cyan / Neon Amethyst. Die-cut stickers, thick white strokes, tilt —",
+    ledeB: "gallery + artifact canvas, bring your own key.",
     tabs: ["Designs", "Design systems"] as const,
-    bannerTitle: "Claude Design is here — with the FR!sky tweak",
-    bannerBody: "Claude's Slides + Design as artifacts. This clone keeps the layout, wears Obsidian + neons and the FR!sky die-cut.",
+    bannerTitle: "FR!SKY Design — an open source Claude Design system",
+    bannerBody: "Claude's Slides + Design as artifacts. This clone keeps the layout, wears Obsidian + neons and the FR!SKY die-cut.",
     adminPill: "Admin · frk_live_ keys",
     noKeyA: "No API key: demo mode.",
     noKeyBtn: "Add API key",
@@ -229,14 +212,14 @@ const COPY = {
     byokOn: "BYOK connected", byokOff: "BYOK not configured",
     benefitsHead: "Why use this clone instead of claude.ai",
     benefitsSub: "Same Claude design, but yours. Mobbin Pro as spec and your own key — no subscription, no lock-in.",
-    modalEyebrow: "FR!sky × Claude Design · BYOK",
+    modalEyebrow: "FR!SKY Design · BYOK",
     modalTitle: "Your key, your costs",
     modalBodyA: "Real BYOK: your key lives",
     modalBodyB: "only in localStorage",
-    modalBodyC: "of your browser. It never touches our server — the Netlify edge forwards it with",
+    modalBodyC: "of your browser. It never touches our server — the /api/chat proxy forwards it with",
     modalTip: "Tip: paste at least one. `Design in codebase` streams directly.",
     cancel: "Cancel", save: "Save keys",
-    openFooter: "Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical",
+    openFooter: "Open source · BYOK · Deploy to Cloudflare",
     cardTitles: ["Slides", "Design", "Design in codebase", "Design System"] as const,
   },
 } as const;
@@ -266,8 +249,8 @@ function Sidebar({ onOpenByok, hasKey, lang }: { onOpenByok: () => void; hasKey:
         </div>
       </div>
       <div className="mx-2 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2.5">
-        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">FR!sky — GOOD PUP. BAD BOI.</div>
-        <div className="mt-0.5 font-mono text-[9px] tracking-wide text-white/35">Obsidian · Hazard Yellow · Cyan · Amethyst · FR!sky</div>
+        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">FR!SKY DESIGN</div>
+        <div className="mt-0.5 font-mono text-[9px] tracking-wide text-white/35">Obsidian · Hazard Yellow · Cyan · Amethyst</div>
       </div>
       <nav aria-label="Principal" className="px-2 py-3 text-[13px]">
         <a className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-white/50 hover:bg-white/5 hover:text-white">
@@ -329,7 +312,7 @@ function Sidebar({ onOpenByok, hasKey, lang }: { onOpenByok: () => void; hasKey:
             "Genspark startup",
             "Security platform selection",
             "Bruma LiveKit concierge agent",
-            "Zeabur deployment troubleshooting",
+            "Deploy to Cloudflare",
             "Inforge stack integration",
             "Design system sync",
           ].map((chatTitle) => (
@@ -367,6 +350,8 @@ function Sidebar({ onOpenByok, hasKey, lang }: { onOpenByok: () => void; hasKey:
   );
 }
 
+const KIND_BY_TITLE: Record<string, string> = { Slides: "slides", Design: "design", "Design in codebase": "codebase", "Design System": "design-system" };
+
 function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; variant: "yellow" | "cyan" | "amethyst" | "coal" }) {
   const glow: Record<string, string> = {
     yellow: "shadow-[0_0_40px_rgba(255,209,0,.22)]",
@@ -382,7 +367,7 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
   };
   const num = { Slides: "01", Design: "02", "Design in codebase": "03", "Design System": "04" }[title] ?? "··";
   return (
-    <button type="button" className="group w-full cursor-pointer text-left" aria-label={`${title}${beta ? " (Beta)" : ""}`}>
+    <Link href={`/canvas?kind=${KIND_BY_TITLE[title] ?? "design"}`} className="group block w-full cursor-pointer text-left" aria-label={`${title}${beta ? " (Beta)" : ""}: open in canvas`}>
       <div className={`sticker-hover card-sheen relative aspect-[4/3] overflow-hidden rounded-[18px] border-white bg-[#1c1828] p-2 outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-[#FFD100] ${glow[variant]}`}>
         <span className="absolute left-2.5 top-2 z-10 rounded-full border border-white/15 bg-black/55 px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-white/70 backdrop-blur" aria-hidden>{num}</span>
         <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] to-black/30" aria-hidden />
@@ -484,7 +469,7 @@ function MakeCard({ title, beta, variant }: { title: string; beta?: boolean; var
         {title} {beta && <span className="rounded-full border border-white/15 bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/60">Beta</span>}
         <span aria-hidden className="ml-auto text-white/0 transition-all group-hover:translate-x-0.5 group-hover:text-[#FFD100]">→</span>
       </div>
-    </button>
+    </Link>
   );
 }
 
@@ -528,30 +513,14 @@ export default function Page() {
   const [byokOpen, setByokOpen] = useState(false);
   const [tab, setTab] = useState<"disenos" | "sistemas">("disenos");
   useScrollY();
-  // English first: default "en" unless the visitor explicitly chose Spanish
-  // (?lang=es wins, then saved preference — a saved "es" is always honored).
-  const [lang, setLang] = useState<"es" | "en">(() => {
-    // Render-time read: query param wins instantly (no effect delay, no screenshot race).
-    try {
-      const q = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("lang");
-      if (q === "es" || q === "en") return q;
-      const saved = localStorage.getItem("open-claude-design:lang");
-      if (saved === "es" || saved === "en") return saved;
-    } catch {}
-    return "en";
-  });
-  // Mount-time language: ?lang= wins (shared links), then saved preference.
-  // No browser sniffing — first impression is always English unless chosen otherwise.
-  // After mount, ONLY the toggle changes lang (optimistic setLang + replaceState).
-  // No polling — a poll would clobber the user's click with a stale read.
-  useEffect(() => {
-    try {
-      const q = new URLSearchParams(window.location.search).get("lang");
-      if (q === "es" || q === "en") { setLang(q); localStorage.setItem("open-claude-design:lang", q); return; }
-      const saved = localStorage.getItem("open-claude-design:lang");
-      if (saved === "es" || saved === "en") { setLang(saved); return; }
-    } catch {}
-  }, []);
+  // English first: ?lang= wins (shared links), then the saved choice, then "en".
+  const q = useQueryParam("lang");
+  const [saved, setSaved] = useLocalStorage("open-claude-design:lang");
+  const lang: Lang = q === "es" || q === "en" ? q : saved === "es" || saved === "en" ? saved : "en";
+  const setLang = (l: Lang) => {
+    try { window.history.replaceState(null, "", l === "es" ? "/?lang=es" : "/"); } catch {}
+    setSaved(l);
+  };
   const t = COPY[lang];
   return (
     <div className="min-h-screen p-0 sm:p-3">
@@ -559,7 +528,7 @@ export default function Page() {
         <Sidebar onOpenByok={() => setByokOpen(true)} hasKey={hasKey} lang={lang} />
         <main className="min-w-0 flex-1 bg-[#0B0B0F]/70">
           <div className="flex h-[52px] items-center gap-2 border-b border-white/10 px-4 sm:hidden">
-            <span className="font-display text-sm font-[800] tracking-[-0.02em] text-white">FR!sky · {lang === "es" ? "Diseño" : "Design"}</span>
+            <span className="font-display text-sm font-[800] tracking-[-0.02em] text-white">FR!SKY · {lang === "es" ? "Diseño" : "Design"}</span>
             <span className="ml-auto"><LangToggle lang={lang} setLang={setLang} /></span>
             <button
               onClick={() => setByokOpen(true)}
@@ -569,14 +538,14 @@ export default function Page() {
             </button>
           </div>
           <div className="px-5 py-6 sm:px-8 sm:py-7">
-            {/* opening shot: eyebrow tc → title bloom → lede rises · FR!sky voice, Framer-grade */}
+            {/* opening shot: eyebrow tc → title bloom → lede rises · FR!SKY voice, Framer-grade */}
             <div className="reveal relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between" style={{ ["--reveal-delay" as string]: "60ms" }}>
               <div className="embers parallax-fast" aria-hidden><i /><i /><i /><i /><i /><i /><i /><i /></div>
               <div>
                 <div className="parallax-slow reveal flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-[#FFD100] uppercase" style={{ ["--reveal-delay" as string]: "0ms" }}>
                   <span className="breathe inline-block h-1.5 w-1.5 rounded-full bg-[#00E5FF]" aria-hidden />
-                  <span className="neon neon-yellow neon-glow" aria-hidden={false}>FR!sky</span>
-                  <span className="text-white/50">× Claude Design · Netlify OSS · 01 — Opening</span>
+                  <span className="neon neon-yellow neon-glow" aria-hidden={false}>FR!SKY</span>
+                  <span className="text-white/50">Design · open source · BYOK</span>
                 </div>
                 <h1 className="reveal title-glow font-display text-[56px] font-[800] leading-[0.9] tracking-[-0.055em] text-white sm:text-[88px]" style={{ ["--reveal-delay" as string]: "120ms" }}>
                   <span className="hero-bloom" aria-hidden />
@@ -626,7 +595,7 @@ export default function Page() {
             <div className="reveal card-sheen mt-5 rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.45)] sm:px-5 sm:py-4" style={{ ["--reveal-delay" as string]: "380ms" }}>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                 <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 border-white bg-[#FFD100] text-[11px] text-[#121212]">◐</span>{" "}
-                <span className="neon neon-cyan neon-glow font-mono text-[10px] tracking-[0.24em] text-[#00E5FF] uppercase">Live · Netlify OSS</span>
+                <span className="neon neon-cyan neon-glow font-mono text-[10px] tracking-[0.24em] text-[#00E5FF] uppercase">Open source · BYOK</span>
                 <span className="font-display text-[17px] font-[800] tracking-[-0.02em] text-white">{t.bannerTitle}</span>
               </div>
               <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -669,17 +638,17 @@ export default function Page() {
               </p>
             </div>
 
-            {/* ticker: the studio signal, always moving — pure FR!sky voice */}
+            {/* ticker: the studio signal, always moving — pure FR!SKY voice */}
             <div className="reveal mt-4 overflow-hidden rounded-full border border-white/10 bg-white/[0.03] py-1.5" style={{ ["--reveal-delay" as string]: "430ms" }} aria-hidden>
               <div className="ticker-track flex w-max items-center gap-8 whitespace-nowrap font-mono text-[10px] tracking-[0.22em] text-white/35 uppercase">
                 {Array.from({ length: 2 }).map((_, dup) => (
                   <span key={dup} className="flex items-center gap-8">
-                    <span>FR!sky × Claude Design</span><span className="neon neon-yellow neon-soft text-[#FFD100]">●</span>
+                    <span>FR!SKY Design</span><span className="neon neon-yellow neon-soft text-[#FFD100]">●</span>
                     <span>BYOK — tu key, tus costos</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "2s" }}>●</span>
-                    <span>Admin · frk_live_ keys</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "4s" }}>●</span>
-                    <span>Mobbin platform: ios|web fixed</span><span className="neon neon-yellow neon-soft text-[#FFD100]" style={{ ["--flicker-delay" as string]: "5.5s" }}>●</span>
-                    <span>Netlify 1-click · Sin backend</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "7s" }}>●</span>
-                    <span>1440px proof — breathtaking or it doesn&apos;t ship</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "8.5s" }}>●</span>
+                    <span>MCP · stdio + streamable HTTP</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "4s" }}>●</span>
+                    <span>Hosted MCP · frk_live_ keys</span><span className="neon neon-yellow neon-soft text-[#FFD100]" style={{ ["--flicker-delay" as string]: "5.5s" }}>●</span>
+                    <span>Deploy to Cloudflare · BYOK</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "7s" }}>●</span>
+                    <span>MIT · self-host in a minute</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "8.5s" }}>●</span>
                   </span>
                 ))}
               </div>
@@ -742,11 +711,11 @@ export default function Page() {
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {[
                   { k: "BYOK · Tu key, tus costos", d: "Pega tu ANTHROPIC / OPENAI / OPENROUTER key. Solo localStorage, nunca servidor. Por token, no $20/mes.", icon: "◈", c: "#FFD100" },
-                  { k: "Privacidad total", d: "Zero storage. Netlify Function es dumb proxy. Tus prompts no se loguean, no hay DB.", icon: "⛨", c: "#00E5FF" },
+                  { k: "Privacidad total", d: "Zero storage. /api/chat es un proxy sin estado. Tus prompts no se loguean, no hay DB.", icon: "⛨", c: "#00E5FF" },
                   { k: "Cualquier modelo, mismo diseño", d: "Claude Design sobre GPT-5 o Gemini vía OpenRouter. Cambia de modelo, no de UI.", icon: "⬢", c: "#9D00FF" },
-                  { k: "Open source · Tuyo", d: "MIT. Forkea, rebrandéa, hostea en Netlify/Vercel. Tweak FR!sky incluido.", icon: "〈〉", c: "#FFD100" },
+                  { k: "Open source · Tuyo", d: "MIT. Forkea, rebrandéa, hostea en Cloudflare o Netlify. Tema FR!SKY incluido.", icon: "〈〉", c: "#FFD100" },
                   { k: "De Mobbin a código real", d: "Mobbin Pro es solo referencia. Esto lo convierte en repo productivo: gallery + canvas.", icon: "◐", c: "#00E5FF" },
-                  { k: "Netlify 1-click · Sin backend", d: "netlify.toml + @netlify/plugin-nextjs. Deploy 60s, sin envs, sin server.", icon: "⬡", c: "#9D00FF" },
+                  { k: "Deploy to Cloudflare", d: "Un clic a tu cuenta de Cloudflare (Netlify también funciona). Sin envs obligatorias.", icon: "⬡", c: "#9D00FF" },
                 ].map((b) => (
                   <div key={b.k} className="sticker-hover rounded-[18px] border-white bg-[#191424] p-4">
                     <div className="flex items-center gap-2 text-[12px] font-[800] tracking-[-0.02em] text-white">
@@ -772,37 +741,39 @@ export default function Page() {
               </div>
             </RevealSection>
             <div className="mt-8 rounded-xl border-2 border-white bg-[#191424] px-4 py-4 shadow-[0_8px_0_rgba(0,0,0,.4)]">
-              <div className="font-mono text-[11px] tracking-[0.2em] text-[#FFD100] uppercase">Open source · Netlify-ready · FR!sky tweak · Zeabur `mcp.zeabur.com` canonical</div>
+              <div className="font-mono text-[11px] tracking-[0.2em] text-[#FFD100] uppercase">{t.openFooter}</div>
               <p className="mt-1 max-w-3xl text-[12px] leading-5 text-white/50">
-                Clon del tab <span className="font-bold text-white">Diseño</span> de claude.ai. Layout de Claude, piel FR!sky: Obsidian{" "}
-                <code className="rounded bg-white/10 px-1 font-mono text-white">#121212</code>, Hazard Yellow{" "}
-                <code className="rounded bg-white/10 px-1 font-mono text-white">#FFD100</code> · Neon. BYOK{" "}
-                <code className="rounded bg-white/10 px-1 font-mono text-white">localStorage → x-api-key → netlify/functions/chat.ts</code> (no storage).{" "}
-                <Link href="/admin" className="font-bold text-white underline decoration-white/20 underline-offset-2">
-                  Admin Center
-                </Link>{" "}
-                mint <code className="rounded bg-white/10 px-1 font-mono text-white">frk_live_…</code> (como Mobbin gated). Netlify 1-click; Zeabur es el MCP canónico.
+                {lang === "es" ? "Galería + canvas de artefactos. Tu key vive en" : "Gallery + artifact canvas. Your key lives in"}{" "}
+                <code className="rounded bg-white/10 px-1 font-mono text-white">localStorage</code>{" "}
+                {lang === "es" ? "y viaja por" : "and goes through"}{" "}
+                <code className="rounded bg-white/10 px-1 font-mono text-white">/api/chat</code>{" "}
+                {lang === "es" ? "(sin almacenamiento). ¿Quieres herramientas extra en tu editor? Conecta el MCP hospedado con una key" : "(no storage). Want extra tools in your editor? Connect the hosted MCP with a"}{" "}
+                <code className="rounded bg-white/10 px-1 font-mono text-white">frk_live_…</code>{lang === "es" ? "." : " key."}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a href="https://app.netlify.com/start/deploy?repository=https://github.com/friskypup/open-claude-design" target="_blank" rel="noreferrer" className="rounded-full border-2 border-white bg-[#FFD100] px-4 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212] shadow-[0_4px_0_rgba(0,0,0,.5)]">
+                <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/FriskyDevelopments/open-claude-design" target="_blank" rel="noreferrer" className="rounded-full border-2 border-white bg-[#FFD100] px-4 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212] shadow-[0_4px_0_rgba(0,0,0,.5)]">
+                  Deploy to Cloudflare
+                </a>
+                <a href="https://app.netlify.com/start/deploy?repository=https://github.com/FriskyDevelopments/open-claude-design" target="_blank" rel="noreferrer" className="rounded-full border-2 border-white/40 bg-[#121212] px-4 py-1.5 font-mono text-xs font-bold tracking-wide text-white/80">
                   Deploy to Netlify
                 </a>
-                <button onClick={() => setByokOpen(true)} className="rounded-full border-2 border-white bg-white px-4 py-1.5 font-mono text-xs font-bold text-[#121212]">
-                  Probar BYOK
-                </button>
-                <Link href="/admin" className="rounded-full border-2 border-white bg-[#00E5FF] px-4 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212]">
-                  {t.adminPill}
+                <Link href="/canvas?kind=design" className="rounded-full border-2 border-white bg-white px-4 py-1.5 font-mono text-xs font-bold text-[#121212]">
+                  {lang === "es" ? "Abrir canvas" : "Open canvas"}
                 </Link>
-                <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 font-mono text-xs tracking-wide text-white/40">Next.js 16 · Tailwind 4 · 1440px proof</span>
+                <a href="https://github.com/FriskyDevelopments/open-claude-design#connect-the-hosted-mcp" target="_blank" rel="noreferrer" className="rounded-full border-2 border-white bg-[#00E5FF] px-4 py-1.5 font-mono text-xs font-[800] tracking-wide text-[#121212]">
+                  Hosted MCP
+                </a>
               </div>
             </div>
             <div className="mt-6">
               <SupportFooterStrip />
             </div>
+            <SiteFooter lang={lang} />
           </div>
         </main>
       </div>
-      <ByokModal open={byokOpen} onClose={() => setByokOpen(false)} keys={keys} onSave={save} t={t} />
+      <StarPopout />
+      <ByokModal key={byokOpen ? "open" : "closed"} open={byokOpen} onClose={() => setByokOpen(false)} keys={keys} onSave={save} t={t} />
     </div>
   );
 }
