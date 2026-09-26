@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "npx serve out",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "preview": "npm run build && wrangler dev",
     "deploy": "wrangler deploy",
