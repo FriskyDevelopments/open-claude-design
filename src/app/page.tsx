@@ -645,10 +645,10 @@ export default function Page() {
                   <span key={dup} className="flex items-center gap-8">
                     <span>FR!SKY Design</span><span className="neon neon-yellow neon-soft text-[#FFD100]">●</span>
                     <span>BYOK — tu key, tus costos</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "2s" }}>●</span>
-                    <span>Admin · frk_live_ keys</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "4s" }}>●</span>
+                    <span>MCP · stdio + streamable HTTP</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "4s" }}>●</span>
                     <span>Hosted MCP · frk_live_ keys</span><span className="neon neon-yellow neon-soft text-[#FFD100]" style={{ ["--flicker-delay" as string]: "5.5s" }}>●</span>
                     <span>Deploy to Cloudflare · BYOK</span><span className="neon neon-cyan neon-soft text-[#00E5FF]" style={{ ["--flicker-delay" as string]: "7s" }}>●</span>
-                    <span>1440px proof — breathtaking or it doesn&apos;t ship</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "8.5s" }}>●</span>
+                    <span>MIT · self-host in a minute</span><span className="neon neon-amethyst neon-soft text-[#9D00FF]" style={{ ["--flicker-delay" as string]: "8.5s" }}>●</span>
                   </span>
                 ))}
               </div>

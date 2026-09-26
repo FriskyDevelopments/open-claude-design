@@ -1,6 +1,6 @@
 "use client";
 
-// SupportRail — Whop + Donations + Sponsors (breathtaking: no default widgets)
+// SupportRail: Whop, donations and sponsor links (single source of truth for support URLs)
 // All links open in new tab. Icons are inline (no extra deps). FR!sky palette:
 // Obsidian #121212 / Hazard Yellow #FFD100 / Cyan #00E5FF / Amethyst #9D00FF + die-cut border-2 white
 // Where it shows: imported by Sidebar (rail) + page footer CTA strip. Source-of-truth for
