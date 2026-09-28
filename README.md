@@ -92,7 +92,7 @@ Zeabur deployment notes: [docs/ZEABUR.md](docs/ZEABUR.md).
 
 ## Support — Whop & Donations
 
-Icon row (left→right): **[Whop](https://whop.com/friskydev)** — FR!sky storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/friskydev)** · **[Buy Me a Coffee](https://buymeacoffee.com/friskydev)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it pup: one Whop checkout or coffee = more 1440px jewels.
+Icon row (left→right): **[Whop](https://whop.com/friskydev)** — FR!sky storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/friskydev)** · **[Buy Me a Coffee](https://buymeacoffee.com/friskydev)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it FR!sky: one Whop checkout or coffee = more 1440px jewels.
 
 In-app: Sidebar **SupportRail** + footer **Support strip** (`src/components/SupportRail.tsx` — `LINKS` source-of-truth).
 

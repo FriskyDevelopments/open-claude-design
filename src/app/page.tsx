@@ -186,7 +186,7 @@ const COPY = {
     pipeline: "Figma Tokens → Style Dictionary →",
     pipelineB: "· react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.",
     pinned: "Fijados", chats: "Chats y tareas",
-    supportHead: "Apoya — Keep it pup",
+    supportHead: "Apoya — Keep it FR!sky",
     byokOn: "BYOK conectado", byokOff: "BYOK sin configurar",
     benefitsHead: "Por qué usar este clon en vez de claude.ai",
     benefitsSub: "Mismo diseño Claude, pero tuyo. Con Mobbin Pro como spec y tu propia key — sin suscripción, sin lock-in.",
@@ -225,7 +225,7 @@ const COPY = {
     pipeline: "Figma Tokens → Style Dictionary →",
     pipelineB: "· react-bits · Uiverse Galaxy → re-tokenized · aw-chip pattern on card titles.",
     pinned: "Pinned", chats: "Chats & tasks",
-    supportHead: "Support — Keep it pup",
+    supportHead: "Support — Keep it FR!sky",
     byokOn: "BYOK connected", byokOff: "BYOK not configured",
     benefitsHead: "Why use this clone instead of claude.ai",
     benefitsSub: "Same Claude design, but yours. Mobbin Pro as spec and your own key — no subscription, no lock-in.",
@@ -266,7 +266,7 @@ function Sidebar({ onOpenByok, hasKey, lang }: { onOpenByok: () => void; hasKey:
         </div>
       </div>
       <div className="mx-2 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-2.5">
-        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">FR!sky — GOOD PUP. BAD BOI.</div>
+        <div className="font-mono text-[10px] font-[700] tracking-[0.2em] text-[#FFD100] uppercase">FR!sky — GOOD TASTE. BAD BOI.</div>
         <div className="mt-0.5 font-mono text-[9px] tracking-wide text-white/35">Obsidian · Hazard Yellow · Cyan · Amethyst · FR!sky</div>
       </div>
       <nav aria-label="Principal" className="px-2 py-3 text-[13px]">

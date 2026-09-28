@@ -14,7 +14,7 @@ npm run dev   # http://localhost:3000  (1440px proof before ship)
 
 ## Design rules
 
-- Ship at 1440px. Screenshot proof before review. No default controls — every control themed to Pup doctrine (Bricolage 800 / Manrope / JetBrains Mono / 42px grid / hairlines / die-cut border-2).
+- Ship at 1440px. Screenshot proof before review. No default controls — every control themed to FR!sky doctrine (Bricolage 800 / Manrope / JetBrains Mono / 42px grid / hairlines / die-cut border-2).
 - One palette: `#121212 / #FFD100 / #00E5FF / #9D00FF`. Paste from Uiverse Galaxy etc only if re-tokenized.
 - Figma is source (Tokens Studio → Style Dictionary → Tailwind). Screenshots are spec, not assets — don't commit Mobbin PNGs.
 
