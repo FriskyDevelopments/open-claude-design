@@ -25,6 +25,9 @@ Node 22.18+ is required (the MCP core runs TypeScript directly with Node's type 
 - Use [Conventional Commits](https://www.conventionalcommits.org): `feat: …`, `fix: …`, `docs: …`, `chore: …`. CI runs commitlint on PR commits.
 - Every commit needs a **Developer Certificate of Origin** sign-off. Add it with `git commit -s`, which appends `Signed-off-by: Your Name <you@example.com>`. It certifies that you wrote the change or have the right to submit it under the project's MIT license ([developercertificate.org](https://developercertificate.org)). Forgot it? `git rebase --signoff main` and force-push your branch.
 - User-facing changes should include a changeset: `npx changeset`. There is no npm publish; changesets only drive the changelog and version.
+- Ship at 1440px. Screenshot proof before review. No default controls — every control themed to FR!sky doctrine (Bricolage 800 / Manrope / JetBrains Mono / 42px grid / hairlines / die-cut border-2).
+- One palette: `#121212 / #FFD100 / #00E5FF / #9D00FF`. Paste from Uiverse Galaxy etc only if re-tokenized.
+- Figma is source (Tokens Studio → Style Dictionary → Tailwind). Screenshots are spec, not assets — don't commit Mobbin PNGs.
 
 ## What makes a good PR
 

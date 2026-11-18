@@ -108,7 +108,7 @@ export function SupportFooterStrip() {
   return (
     <div className="rounded-[18px] border-2 border-white bg-[#191424] p-4 shadow-[0_10px_0_rgba(0,0,0,.4)] sm:flex sm:items-center sm:justify-between sm:gap-4">
       <div>
-        <div className="font-mono text-[10px] tracking-[0.18em] text-[#FFD100] uppercase">Keep it open · Keep it pup</div>
+        <div className="font-mono text-[10px] tracking-[0.18em] text-[#FFD100] uppercase">Keep it open · Keep it FR!sky</div>
         <div className="mt-1 font-display text-[14px] font-[800] tracking-[-0.02em] text-white">Support keeps Diseño free — BYOK, no paywall, no data sale.</div>
         <div className="mt-1 font-mono text-[11px] leading-5 text-white/45">Whop checkout, GitHub Sponsors, or a Ko-fi — one click, zero dark pattern. Choose your den.</div>
       </div>

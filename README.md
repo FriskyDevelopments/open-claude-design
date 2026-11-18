@@ -243,6 +243,26 @@ Issues and PRs are welcome. The flow is short: open an issue or PR, Code Pup doe
 
 Star it if it helps.
 
+Scopes in UI: `frisky.mcp` (all tools) + `mobbin:read` + `memory:read` + `github:read` + `model:live`.
+
+Zeabur deployment notes: [docs/ZEABUR.md](docs/ZEABUR.md).
+
+## Support — Whop & Donations
+
+Icon row (left→right): **[Whop](https://whop.com/friskydev)** — FR!sky storefront (perks / checkout) · **[GitHub Sponsors](https://github.com/sponsors/FriskyDevelopments)** · **[Ko-fi](https://ko-fi.com/friskydev)** · **[Buy Me a Coffee](https://buymeacoffee.com/friskydev)**. All via [FUNDING.yml](.github/FUNDING.yml) — the pink Sponsors heart shows on every GH page. Keep it open, keep it FR!sky: one Whop checkout or coffee = more 1440px jewels.
+
+In-app: Sidebar **SupportRail** + footer **Support strip** (`src/components/SupportRail.tsx` — `LINKS` source-of-truth).
+
+## Design system
+
+[MVP spec → Figma + jewels ready for Awwwards.]
+
+## Legal
+
+- Rebuild clean — **no Mobbin PNGs** in repo. Reference only, per Mobbin ToS.
+- Name forks `Open Design`, not `Claude Design`.
+>>>>>>> origin/main
+
 ## License
 
 [MIT](LICENSE) © Frisky Developments
