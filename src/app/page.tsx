@@ -55,10 +55,12 @@ const STORAGE_KEY = "open-claude-design:keys";
 function useByok() {
   const [keys, setKeys] = useState<ByokKeys>({ anthropic: "", openai: "", openrouter: "" });
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setKeys(JSON.parse(raw));
-    } catch {}
+    queueMicrotask(() => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) setKeys(JSON.parse(raw));
+      } catch {}
+    });
   }, []);
   const save = (n: ByokKeys) => {
     setKeys(n);
@@ -69,7 +71,9 @@ function useByok() {
 
 function ByokModal({ open, onClose, keys, onSave, t }: { open: boolean; onClose: () => void; keys: ByokKeys; onSave: (k: ByokKeys) => void; t: (typeof COPY)[Lang] }) {
   const [draft, setDraft] = useState(keys);
-  useEffect(() => setDraft(keys), [keys]);
+  useEffect(() => {
+    queueMicrotask(() => setDraft(keys));
+  }, [keys]);
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-md">
@@ -546,10 +550,12 @@ export default function Page() {
   // No polling — a poll would clobber the user's click with a stale read.
   useEffect(() => {
     try {
-      const q = new URLSearchParams(window.location.search).get("lang");
-      if (q === "es" || q === "en") { setLang(q); localStorage.setItem("open-claude-design:lang", q); return; }
-      const saved = localStorage.getItem("open-claude-design:lang");
-      if (saved === "es" || saved === "en") { setLang(saved); return; }
+      queueMicrotask(() => {
+        const q = new URLSearchParams(window.location.search).get("lang");
+        if (q === "es" || q === "en") { setLang(q); localStorage.setItem("open-claude-design:lang", q); return; }
+        const saved = localStorage.getItem("open-claude-design:lang");
+        if (saved === "es" || saved === "en") { setLang(saved); return; }
+      });
     } catch {}
   }, []);
   const t = COPY[lang];
