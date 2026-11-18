@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useLocalStorage } from "@/lib/storage";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type ApiKeyRecord = {
   id: string;
@@ -27,45 +29,45 @@ const TOOL_SCOPES = [
 ];
 
 function makeKey(): { prefix: string; secret: string; display: string } {
-  const rand = () => Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
-  const body = (rand() + rand()).slice(0, 32);
+  // Local demo only: real frk_live_ keys are issued by the hosted MCP and stored hashed server-side.
+  const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const body = Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
   const secret = `frk_live_${body}`;
   const prefix = `frk_live_${body.slice(0, 8)}…${body.slice(-4)}`;
   return { prefix, secret, display: secret };
 }
 
 export default function AdminPage() {
-  const [authed, setAuthed] = useState(false);
+  const [authRaw, setAuthRaw] = useLocalStorage(ADMIN_AUTH_KEY);
+  const [keysRaw, setKeysRaw] = useLocalStorage(ADMIN_KEYS_KEY);
+  const authed = authRaw === "true";
+  const setAuthed = (v: boolean) => setAuthRaw(v ? "true" : null);
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
-  const [keys, setKeys] = useState<ApiKeyRecord[]>([]);
+  const keys = useMemo<ApiKeyRecord[]>(() => {
+    try {
+      return keysRaw ? (JSON.parse(keysRaw) as ApiKeyRecord[]) : [];
+    } catch {
+      return [];
+    }
+  }, [keysRaw]);
   const [newName, setNewName] = useState("MVP — open-claude-design");
   const [newScopes, setNewScopes] = useState<string[]>(["frisky.mcp"]);
   const [newExpiry, setNewExpiry] = useState<"30d" | "90d" | "never">("30d");
   const [justCreated, setJustCreated] = useState<ApiKeyRecord | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
 
-  useEffect(() => {
-    try {
-      const a = localStorage.getItem(ADMIN_AUTH_KEY);
-      if (a === "true") setAuthed(true);
-      const raw = localStorage.getItem(ADMIN_KEYS_KEY);
-      if (raw) setKeys(JSON.parse(raw));
-    } catch {}
-  }, []);
-
   const persistKeys = (next: ApiKeyRecord[]) => {
-    setKeys(next);
-    localStorage.setItem(ADMIN_KEYS_KEY, JSON.stringify(next));
+    setKeysRaw(JSON.stringify(next));
   };
 
   const handleLogin = () => {
     if (password === OWNER_PASSWORD) {
-      localStorage.setItem(ADMIN_AUTH_KEY, "true");
       setAuthed(true);
       setAuthError("");
     } else {
-      setAuthError("Wrong owner password. Hint for MVP: frisky-owner");
+      setAuthError("Wrong demo password. It is shown above: frisky-owner");
     }
   };
 
@@ -109,14 +111,14 @@ export default function AdminPage() {
             <div className="flex items-center gap-3">
               <span className="grid h-10 w-10 place-items-center rounded-xl border-2 border-white bg-[#FFD100] text-[#121212] font-[900]">◐</span>
               <div>
-                <div className="font-mono text-[10px] tracking-[0.22em] text-[#00E5FF] uppercase">FRISKY DEV MCP · ADMIN CENTER</div>
+                <div className="font-mono text-[10px] tracking-[0.22em] text-[#00E5FF] uppercase">FR!SKY DESIGN · LOCAL KEY DEMO</div>
                 <h1 className="font-[800] text-[20px] tracking-tight text-white" style={{ fontFamily: "var(--font-bricolage)" }}>
-                  Frisky Dev Client Access
+                  Key manager demo
                 </h1>
               </div>
             </div>
             <p className="mt-3 text-[13px] leading-5 text-[#A49CB4]">
-              Owner / admin only. Same trust gate as the MCP gateway. MVP password is <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[11px] text-[#121212]">frisky-owner</code>
+              Local UI demo, nothing here touches a server. Demo password is <code className="rounded bg-white px-1.5 py-0.5 font-mono text-[11px] text-[#121212]">frisky-owner</code>
             </p>
             <div className="mt-4 grid grid-cols-3 gap-2">
               <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
@@ -153,7 +155,7 @@ export default function AdminPage() {
               </Link>
             </div>
             <p className="mt-3 font-mono text-[10px] leading-4 tracking-wide text-white/30 uppercase">
-              MVP note: auth is localStorage-gated. Production will use Supabase + <code>FRISKY_SUPABASE_OWNER_EMAILS</code> + audited JWT, same as <code>/oauth/authorize</code>.
+              Demo only: everything here lives in your browser (localStorage) and gates nothing on a server. Real <code>frk_live_</code> keys come from the hosted MCP and are stored hashed there.
             </p>
           </div>
         </div>
@@ -185,7 +187,6 @@ export default function AdminPage() {
             </span>
             <button
               onClick={() => {
-                localStorage.removeItem(ADMIN_AUTH_KEY);
                 setAuthed(false);
                 setPassword("");
               }}
@@ -285,7 +286,7 @@ export default function AdminPage() {
                 <div className="mt-3 font-[800] text-[13px] text-white" style={{ fontFamily: "var(--font-bricolage)" }}>
                   No keys yet — create your first
                 </div>
-                <div className="mt-1 font-mono text-[11px] text-white/40 uppercase">MVP stores in localStorage. Production: Mongo <code>api_keys_v2</code> + D1 <code>toolPolicy</code>.</div>
+                <div className="mt-1 font-mono text-[11px] text-white/40 uppercase">Demo keys live in localStorage only. Hosted keys are HMAC-hashed in D1.</div>
               </div>
             ) : (
               <div className="mt-4 grid gap-3">
@@ -318,21 +319,18 @@ export default function AdminPage() {
             )}
 
             <div className="mt-6 rounded-xl border-2 border-white bg-[#191424] p-4">
-              <div className="font-mono text-[10px] tracking-[0.2em] text-[#FFD100] uppercase">MVP → Production path</div>
-              <ul className="mt-2 list-disc pl-5 font-mono text-[11px] leading-5 text-white/50">
-                <li>
-                  Mobbin fix: re-add <code className="text-white">platform?: enum(&quot;ios&quot;,&quot;web&quot;) default &quot;web&quot;</code> to <code className="text-white">mobbin_search_*</code> proxy tools in <code className="text-white">frisky-gpt-mcp</code> before Zeabur cutover.
-                </li>
-                <li>Zeabur canonical: refresh <code className="text-white">zat_</code> via <code className="text-white">zeabur auth login</code> → bind <code className="text-white">open-claude-design</code> to <code className="text-white">untitled-2</code> → <code className="text-white">mcp.friskydev.com</code> CNAME → <code className="text-white">*.zeabur.app</code>.</li>
-                <li>Netlify OSS: <code className="text-white">LICENSE MIT</code> + live URL + apply at <code className="text-white">netlify.com/open-source</code> for Pro perks.</li>
-              </ul>
+              <div className="font-mono text-[10px] tracking-[0.2em] text-[#FFD100] uppercase">Real keys</div>
+              <p className="mt-2 font-mono text-[11px] leading-5 text-white/50">
+                This page is a UI demo of the key flow (name, scopes, expiry, copy once, revoke). Real <code className="text-white">frk_live_</code> keys for the hosted MCP are issued after checkout and verified server-side. See the README section &quot;Connect the hosted MCP&quot;.
+              </p>
               <div className="mt-3 flex gap-2">
                 <Link href="/" className="rounded-full border-2 border-white bg-[#FFD100] px-4 py-1.5 font-mono text-[11px] font-[800] tracking-wide text-[#121212]">
                   Back to gallery
                 </Link>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-[11px] tracking-wide text-white/40">Next.js 16 · Tailwind 4 · breathtaking</span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-[11px] tracking-wide text-white/40">Next.js 16 · Tailwind 4</span>
               </div>
             </div>
+            <SiteFooter />
           </div>
         </div>
       </div>

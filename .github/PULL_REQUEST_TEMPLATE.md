@@ -1,12 +1,15 @@
-## What
-<!-- breathtaking change + tokens touched -->
+## What and why
 
-## Proof
-- [ ] `npm run build` green
-- [ ] Screenshots attached (gallery/admin/login at 1440px if UI)
-- [ ] BYOK still localStorage-only, no server leak
-- [ ] Mobbin: reference only, no PNGs committed
+<!-- One or two sentences. Link the issue: Closes #123 -->
+
+## How I tested it
+
+<!-- Commands you ran, screenshots for UI changes (desktop + narrow viewport) -->
 
 ## Checklist
-- [ ] No secrets (`FRISKY_*`, `COMPOSIO_*`, `.env`, `*.pem`)
-- [ ] Admin keys: revoked/expired → deny + audit copy-once respected
+
+- [ ] Commits follow Conventional Commits and are signed off (`git commit -s`)
+- [ ] `npm run lint`, `npm run typecheck`, `npm test` and `npm run build` pass
+- [ ] Tests added or updated for changes in `mcp/`, `worker/` or `netlify/functions/`
+- [ ] Changeset added for user-facing changes (`npx changeset`)
+- [ ] No secrets, keys or `.env` files; BYOK keys stay client-side

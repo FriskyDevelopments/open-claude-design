@@ -1,12 +1,10 @@
+# Secondary option. Cloudflare (wrangler.jsonc) is the primary deploy target.
 [build]
   command = "npm run build"
-  publish = ".next"
+  publish = "out"
 
 [build.environment]
-  NODE_VERSION = "20"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+  NODE_VERSION = "22"
 
 [functions]
   directory = "netlify/functions"

@@ -1,15 +1,25 @@
 {
   "name": "open-claude-design",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build --webpack",
+    "start": "npx serve out",
     "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "wrangler deploy",
+    "mcp:stdio": "node mcp/stdio.ts",
+    "changeset": "changeset",
     "netlify:dev": "netlify dev"
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "next": "16.3.6",
@@ -18,14 +28,52 @@
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@cloudflare/workers-types": "^5.20260926.1",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@netlify/functions": "^6.0.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20.19.43",
+    "@types/node": "^22.20.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.2",
+    "wrangler": "^4.141.0"
+  },
+  "description": "FR!SKY Design. An open source Claude Design system: gallery + artifact canvas, bring your own key, and a hosted MCP when you want it.",
+  "displayName": "FR!SKY Design",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FriskyDevelopments/open-claude-design.git"
+  },
+  "homepage": "https://frisky-design.hrgrrtks2p.workers.dev",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "exports": {
+    "./mcp": "./mcp/index.ts",
+    "./mcp/*": "./mcp/*.ts"
+  },
+  "cloudflare": {
+    "bindings": {
+      "MCP_TOKEN": {
+        "description": "Optional. Bearer token for the self-hosted `/mcp` endpoint. Model keys below are only used when this is set. Generate one with `openssl rand -hex 32`."
+      },
+      "ANTHROPIC_API_KEY": {
+        "description": "Optional. Lets the self-hosted MCP `generate_artifact` tool call Claude with **your** key. The web app never needs it (BYOK in the browser)."
+      },
+      "OPENAI_API_KEY": {
+        "description": "Optional. Same as above, for OpenAI."
+      },
+      "OPENROUTER_API_KEY": {
+        "description": "Optional. Same as above, for OpenRouter."
+      }
+    }
   }
 }

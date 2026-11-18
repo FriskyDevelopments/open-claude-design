@@ -1,21 +1,13 @@
 import type { NextConfig } from "next";
 
+// Static export: the app is fully client-side (BYOK keys stay in the browser).
+// Security headers live in public/_headers (read by Cloudflare and Netlify).
 const nextConfig: NextConfig = {
-  compress: true,
+  output: "export",
+  trailingSlash: false,
+  images: { unoptimized: true },
   poweredByHeader: false,
   experimental: { optimizePackageImports: ["clsx", "tailwind-merge"] },
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "clipboard-write=(self)" },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;
